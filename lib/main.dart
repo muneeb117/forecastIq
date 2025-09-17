@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:forcast/view/Help_FAQ_Screen.dart';
-import 'package:forcast/view/Term_and_condition_screen.dart';
-import 'package:forcast/view/about_app.dart';
-import 'package:forcast/view/favourite_screen.dart';
-import 'package:forcast/view/notifications_settings_screen.dart';
-import 'package:forcast/view/privacy_policy_screen.dart';
-import 'package:forcast/view/profile_screen.dart';
-import 'package:forcast/view/security_screen.dart';
-import 'package:forcast/view/setting_screen.dart';
 import 'package:forcast/view/splash_screen.dart';
 import '../core/constants/colors.dart';
 import '../widgets/dismiss_keyboard.dart';
 import 'package:get/get.dart';
-void main() {
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'core/config/supabase_config.dart';
+import 'services/auth_service.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Supabase.initialize(
+    url: SupabaseConfig.supabaseUrl,
+    anonKey: SupabaseConfig.supabaseAnonKey,
+  );
+
+  Get.put(AuthService());
 
 //  SystemChrome.setSystemUIOverlayStyle(
   //   const SystemUiOverlayStyle(

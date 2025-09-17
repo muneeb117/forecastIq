@@ -4,8 +4,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:forcast/core/constants/images.dart';
 import 'package:forcast/widgets/custom_button.dart';
 import 'package:forcast/widgets/custom_textfield.dart';
+import 'package:get/get.dart';
 import '../core/constants/colors.dart';
 import '../core/constants/fonts.dart';
+import '../services/auth_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -15,10 +17,20 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final TextEditingController _nameController = TextEditingController(
-      text: 'John Doe');
-  final TextEditingController _emailController = TextEditingController(
-      text: 'john.doe@email.com');
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final AuthService _authService = Get.find<AuthService>();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  void _loadUserData() {
+    _emailController.text = _authService.userEmail ?? '';
+    _nameController.text = _authService.userName ?? '';
+  }
 
 
   @override
@@ -69,13 +81,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           ),
                           child: Center(
-                            child: Text(
-                              'JD',
-                              style: AppTextStyles.ktwhite16600.copyWith(
-                                fontSize: 32.sp,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                            child: Obx(() {
+                              final userName = _authService.userName ?? 'User';
+                              final initials = userName.split(' ')
+                                  .map((name) => name.isNotEmpty ? name[0].toUpperCase() : '')
+                                  .take(2)
+                                  .join('');
+                              return Text(
+                                initials.isNotEmpty ? initials : 'U',
+                                style: AppTextStyles.ktwhite16600.copyWith(
+                                  fontSize: 32.sp,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              );
+                            }),
                           ),
                         ),
                         Positioned(
@@ -129,9 +148,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   15.verticalSpace,
-                  CustomButton(text: "Update", onPressed: (){}, color: AppColors.kprimary,
+                  Obx(() => CustomButton(
+                    text: _authService.isLoading.value ? "Updating..." : "Update",
+                    onPressed: _authService.isLoading.value ? () {} : () async {
+                      await _authService.updateProfile(
+                        fullName: _nameController.text.trim(),
+                        email: _emailController.text.trim(),
+                      );
+                    },
+                    color: AppColors.kprimary,
                     textStyle: AppTextStyles.kwhite16700,
-                  ),
+                  )),
 
                   // Personal Information
                 ]

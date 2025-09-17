@@ -9,6 +9,7 @@ import '../../core/constants/fonts.dart';
 import '../../core/constants/images.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_textfield.dart';
+import '../../services/auth_service.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -20,6 +21,7 @@ class ForgotPasswordScreen extends StatefulWidget {
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final TextEditingController emailController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final AuthService _authService = Get.find<AuthService>();
 
   @override
   void dispose() {
@@ -106,17 +108,19 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                21.verticalSpace,
 
                 // Send OTP Button
-                CustomButton(
-                  text: 'Send OTP Code',
-                  onPressed: () {
+                Obx(() => CustomButton(
+                  text: _authService.isLoading.value ? 'Sending...' : 'Send Reset Email',
+                  onPressed: _authService.isLoading.value ? () {} : () async {
                     if (_formKey.currentState!.validate()) {
-                      Get.to(() => const OTPVerificationScreen());
+                      await _authService.resetPassword(
+                        email: emailController.text.trim(),
+                      );
                     }
                   },
                   color: AppColors.kprimary,
                   backgroundColor: AppColors.kprimary,
                   width: double.infinity,
-                ),
+                )),
 
                 SizedBox(height: 40.h),
               ],

@@ -10,6 +10,7 @@ import '../../core/constants/fonts.dart';
 import '../../core/constants/images.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_textfield.dart';
+import '../../services/auth_service.dart';
 import 'forgot_password_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -23,6 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final AuthService _authService = Get.find<AuthService>();
   bool rememberMe = false;
 
   @override
@@ -194,18 +196,24 @@ class _LoginScreenState extends State<LoginScreen> {
                 18.verticalSpace,
                 
                 // Sign In Button
-                CustomButton(
-                  text: 'Sign in',
-                  onPressed: () {
-                    // if (_formKey.currentState!.validate()) {
-                    //
-                    // }
-                    Get.to(()=>BottomNavBar());
+                Obx(() => CustomButton(
+                  text: _authService.isLoading.value ? 'Signing in...' : 'Sign in',
+                  onPressed: _authService.isLoading.value ? () {} : () async {
+                    if (_formKey.currentState!.validate()) {
+                      final response = await _authService.signIn(
+                        email: emailController.text.trim(),
+                        password: passwordController.text,
+                      );
+
+                      if (response != null && response.user != null) {
+                        Get.offAll(() => BottomNavBar());
+                      }
+                    }
                   },
                   color: AppColors.kprimary,
                   backgroundColor: AppColors.kprimary,
                   width: double.infinity,
-                ),
+                )),
 
                 18.verticalSpace,
                 

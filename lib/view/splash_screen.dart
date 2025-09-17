@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'dart:async';
+import 'package:get/get.dart';
 
 import '../core/constants/fonts.dart';
 import '../core/constants/colors.dart';
+import '../services/auth_service.dart';
+import '../widgets/bottom_nav_bar.dart';
 import 'onboarding.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -23,10 +26,12 @@ class _SplashScreenState extends State<SplashScreen> {
   void _navigateToOnboarding() {
     Timer(const Duration(seconds: 2), () {
       if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const OnBoarding()),
-        );
+        final authService = Get.find<AuthService>();
+        if (authService.isSignedIn) {
+          Get.offAll(() => BottomNavBar());
+        } else {
+          Get.offAll(() => const OnBoarding());
+        }
       }
     });
   }

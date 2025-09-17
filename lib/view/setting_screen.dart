@@ -3,8 +3,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:forcast/core/constants/images.dart';
 import 'package:forcast/widgets/custom_button.dart';
+import 'package:get/get.dart';
 import '../core/constants/colors.dart';
 import '../core/constants/fonts.dart';
+import '../services/auth_service.dart';
+import '../view/Auth/login_screen.dart';
 import 'profile_screen.dart';
 import 'favourite_screen.dart';
 import 'notifications_settings_screen.dart';
@@ -23,6 +26,8 @@ class SettingScreen extends StatefulWidget {
 }
 
 class _SettingScreenState extends State<SettingScreen> {
+  final AuthService _authService = Get.find<AuthService>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,24 +95,31 @@ class _SettingScreenState extends State<SettingScreen> {
                         ),
                       ),
                       child: Center(
-                        child: Text(
-                          'JD',
-                          style: AppTextStyles.ktwhite16600.copyWith(
-                            fontSize: 32.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        child: Obx(() {
+                          final userName = _authService.userName ?? 'User';
+                          final initials = userName.split(' ')
+                              .map((name) => name.isNotEmpty ? name[0].toUpperCase() : '')
+                              .take(2)
+                              .join('');
+                          return Text(
+                            initials.isNotEmpty ? initials : 'U',
+                            style: AppTextStyles.ktwhite16600.copyWith(
+                              fontSize: 32.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          );
+                        }),
                       ),
                     ),
                     12.verticalSpace,
-                    Text(
-                      "John Doe",
+                    Obx(() => Text(
+                      _authService.userName ?? "User",
                       style: AppTextStyles.kblack14700.copyWith(color: AppColors.kwhite),
-                    ),
-                    Text(
-                      "john.doe@email.com",
+                    )),
+                    Obx(() => Text(
+                      _authService.userEmail ?? "No email",
                       style: AppTextStyles.kwhite14400,
-                    ),
+                    )),
                   ],
                 ),
               ),
@@ -150,13 +162,19 @@ class _SettingScreenState extends State<SettingScreen> {
               ),
 
               15.verticalSpace,
-              CustomButton2(text: "Logout", onPressed: (){}, color: AppColors.kred,
+              Obx(() => CustomButton2(
+                text: _authService.isLoading.value ? "Logging out..." : "Logout",
+                onPressed: _authService.isLoading.value ? () {} : () async {
+                  await _authService.signOut();
+                  Get.offAll(() => const LoginScreen());
+                },
+                color: AppColors.kred,
                 svgIcon: AppImages.logout,
                 textStyle: AppTextStyles.kblack14700.copyWith(
                   color: AppColors.kwhite,
                 ),
                 centerIcon: true,
-              ),
+              )),
 
 
 

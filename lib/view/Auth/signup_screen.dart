@@ -8,6 +8,7 @@ import '../../core/constants/images.dart';
 import '../../widgets/bottom_nav_bar.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_textfield.dart';
+import '../../services/auth_service.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -24,6 +25,7 @@ class _SignupScreenState extends State<SignupScreen> {
       TextEditingController();
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final AuthService _authService = Get.find<AuthService>();
 
   @override
   void dispose() {
@@ -178,18 +180,25 @@ class _SignupScreenState extends State<SignupScreen> {
                   18.verticalSpace,
           
                   // Sign Up Button
-                  CustomButton(
-                    text: 'Sign up',
-                    onPressed: () {
-                      // if (_formKey.currentState!.validate()) {
-                      //   // Handle sign up
-                      // }
-                      Get.to(()=>BottomNavBar());
+                  Obx(() => CustomButton(
+                    text: _authService.isLoading.value ? 'Creating account...' : 'Sign up',
+                    onPressed: _authService.isLoading.value ? () {} : () async {
+                      if (_formKey.currentState!.validate()) {
+                        final response = await _authService.signUp(
+                          email: emailController.text.trim(),
+                          password: passwordController.text,
+                          fullName: fullNameController.text.trim(),
+                        );
+
+                        if (response != null && response.user != null) {
+                          Get.offAll(() => BottomNavBar());
+                        }
+                      }
                     },
                     color: AppColors.kprimary,
                     backgroundColor: AppColors.kprimary,
                     width: double.infinity,
-                  ),
+                  )),
           
                   18.verticalSpace,
           
