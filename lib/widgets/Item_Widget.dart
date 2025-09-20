@@ -15,8 +15,9 @@ Widget buildTrendingItem(
     String name,
     String percentage,
     bool isUp,
-    String price,
-    ) {
+    String price, {
+    bool isUpdating = false,
+    }) {
   return GestureDetector(
     onTap: () {
       Get.to(
@@ -30,11 +31,24 @@ Widget buildTrendingItem(
         ),
       );
     },
-    child: Container(
+    child: AnimatedContainer(
+      duration: Duration(milliseconds: 300),
       padding: EdgeInsets.all(8.w),
       decoration: BoxDecoration(
         color: AppColors.kfourth.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(12.r),
+        // border: isUpdating
+        //     ? Border.all(color: AppColors.kprimary.withValues(alpha: 0.8), width: 2.0)
+        //     : null,
+        // boxShadow: isUpdating
+        //     ? [
+        //         BoxShadow(
+        //           color: AppColors.kprimary.withValues(alpha: 0.3),
+        //           blurRadius: 8.0,
+        //           spreadRadius: 1.0,
+        //         ),
+        //       ]
+        //     : null,
       ),
       child: Column(
         children: [
@@ -48,7 +62,7 @@ Widget buildTrendingItem(
                 child: image != null
                     ? Image.asset(image)
                     : Text(
-                  symbol.substring(0, 1),
+                  symbol.isNotEmpty ? symbol.substring(0, 1) : '?',
                   style: AppTextStyles.ktwhite16600.copyWith(
                     color: AppColors.kwhite,
                     fontWeight: FontWeight.bold,
@@ -65,7 +79,6 @@ Widget buildTrendingItem(
                   ],
                 ),
               ),
-              Spacer(),
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
                 decoration: BoxDecoration(
@@ -154,6 +167,8 @@ Widget buildTrendingItem(
                   ),
                 ],
               ),
+
+
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

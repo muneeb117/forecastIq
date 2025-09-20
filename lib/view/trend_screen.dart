@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:forcast/core/constants/images.dart';
+import 'dart:async';
 import '../core/constants/colors.dart';
 import '../core/constants/fonts.dart';
+import '../services/trading_ai_service.dart';
+import '../services/websocket_service.dart';
+import '../models/market_data.dart';
 
 class TrendScreen extends StatefulWidget {
   const TrendScreen({super.key});
@@ -18,6 +22,20 @@ class _TrendScreenState extends State<TrendScreen> {
   bool forecastVsActual = false;
   String selectedCoinSymbol = 'BTC';
   bool showDropdown = false;
+  bool _isLoading = false;
+
+  final TradingAIService _tradingService = TradingAIService();
+  final WebSocketService _webSocketService = WebSocketService();
+  StreamSubscription<RealTimeUpdate>? _realTimeSubscription;
+  StreamSubscription<TrendsUpdate>? _trendsSubscription;
+  AssetTrends? _currentTrends;
+
+  // Real-time accuracy updates
+  Map<String, double> _realTimeAccuracy = {};
+
+  // Real-time trends data
+  TrendsUpdate? _currentTrendsUpdate;
+  List<Map<String, dynamic>> _realTimeTrendHistory = [];
 
   final List<String> timeFilters = ['1W', '7D', '1M', '1Y', '5Y'];
 
@@ -26,23 +44,166 @@ class _TrendScreenState extends State<TrendScreen> {
       'symbol': 'BTC',
       'name': 'Bitcoin',
       'image': AppImages.btc,
-      'accuracy': '86%',
     },
     {
       'symbol': 'ETH',
       'name': 'Ethereum',
       'image': AppImages.eth,
-      'accuracy': '92%',
     },
     {
-      'symbol': 'REV',
-      'name': 'Revain',
-      'image': AppImages.rev,
-      'accuracy': '78%',
+      'symbol': 'NVDA',
+      'name': 'NVIDIA',
+      'image': null,
     },
-    {'symbol': 'ADA', 'name': 'Cardano', 'image': null, 'accuracy': '65%'},
-    {'symbol': 'DOT', 'name': 'Polkadot', 'image': null, 'accuracy': '71%'},
+    {
+      'symbol': 'AAPL',
+      'name': 'Apple Inc.',
+      'image': null,
+    },
+    {
+      'symbol': 'MSFT',
+      'name': 'Microsoft',
+      'image': null,
+    },
+    {
+      'symbol': 'GDP',
+      'name': 'GDP',
+      'image': null,
+    },
+    {
+      'symbol': 'CPI',
+      'name': 'CPI (Inflation)',
+      'image': null,
+    },
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTrendData();
+    _startRealTimeTrendsUpdates();
+  }
+
+  @override
+  void dispose() {
+    _realTimeSubscription?.cancel();
+    _trendsSubscription?.cancel();
+    _webSocketService.dispose();
+    super.dispose();
+  }
+
+  void _startRealTimeTrendsUpdates() {
+    // Only connect if the symbol has trends endpoint available
+    final availableTrendsSymbols = ['BTC', 'NVDA'];
+
+    if (availableTrendsSymbols.contains(selectedCoinSymbol)) {
+      print('🔗 Connecting to trends WebSocket for ${selectedCoinSymbol}');
+
+      _webSocketService.connectToAssetTrends(selectedCoinSymbol);
+
+      _trendsSubscription = _webSocketService.trendsStream?.listen(
+        (trendsUpdate) {
+          _handleTrendsUpdate(trendsUpdate);
+        },
+        onError: (error) {
+          print('❌ Trends WebSocket error: $error');
+          // Generate mock trends data for symbols without trends endpoints
+          _generateMockTrendsData();
+        },
+      );
+    } else {
+      print('📊 No trends endpoint for ${selectedCoinSymbol}, using mock data');
+      _generateMockTrendsData();
+    }
+  }
+
+  void _generateMockTrendsData() {
+    // Generate mock trends update for symbols without real endpoints
+    final mockTrendsUpdate = TrendsUpdate(
+      type: 'trends_update',
+      symbol: selectedCoinSymbol,
+      accuracy: double.parse(_getRealTimeAccuracy(selectedCoinSymbol).replaceAll('%', '')),
+      chart: TrendsChart(
+        forecast: [65.2, 68.1, 71.3, 69.8, 73.2],
+        actual: [64.8, 67.9, 70.1, 69.5, 72.8],
+        timestamps: ['09:00', '12:00', '15:00', '18:00', '21:00'],
+      ),
+      history: [
+        TrendsHistory(date: 'Aug 1 2025', forecast: 'UP', actual: 'UP', result: 'HIT'),
+        TrendsHistory(date: 'Aug 2 2025', forecast: 'UP', actual: 'DOWN', result: 'MISS'),
+        TrendsHistory(date: 'Aug 3 2025', forecast: 'DOWN', actual: 'DOWN', result: 'HIT'),
+      ],
+      lastUpdated: DateTime.now(),
+    );
+
+    _handleTrendsUpdate(mockTrendsUpdate);
+  }
+
+  void _handleTrendsUpdate(TrendsUpdate trendsUpdate) {
+    if (!mounted) return;
+
+    print('📈 Received trends update: ${trendsUpdate.symbol} - Accuracy: ${trendsUpdate.accuracy}%');
+
+    setState(() {
+      _currentTrendsUpdate = trendsUpdate;
+
+      // Update real-time accuracy
+      _realTimeAccuracy[trendsUpdate.symbol] = trendsUpdate.accuracy;
+
+      // Convert API history to UI format
+      _realTimeTrendHistory = trendsUpdate.history.map((historyItem) {
+        Color forecastColor = historyItem.forecast.toUpperCase() == 'UP' ? AppColors.kgreen : AppColors.kred;
+        Color actualColor = historyItem.actual.toUpperCase() == 'UP' ? AppColors.kgreen : AppColors.kred;
+        Color resultColor = historyItem.result.toUpperCase() == 'HIT' ? AppColors.kgreen : AppColors.kred;
+
+        return {
+          'date': historyItem.date,
+          'forecast': historyItem.forecast.toLowerCase() == 'up' ? 'Up' : 'Down',
+          'actual': historyItem.actual.toLowerCase() == 'up' ? 'Up' : 'Down',
+          'result': historyItem.result.toLowerCase() == 'hit' ? 'Hit' : 'Miss',
+          'forecastColor': forecastColor,
+          'actualColor': actualColor,
+          'resultColor': resultColor,
+        };
+      }).toList();
+    });
+  }
+
+  Future<void> _loadTrendData() async {
+    setState(() => _isLoading = true);
+
+    try {
+      final trends = await _tradingService.getAssetTrends(
+        selectedCoinSymbol,
+        timeframe: _getTimeframeForFilter(selectedTimeFilter)
+      );
+
+      setState(() {
+        _currentTrends = trends;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() => _isLoading = false);
+      print('Error loading trend data: $e');
+    }
+  }
+
+  String _getTimeframeForFilter(String filter) {
+    switch (filter) {
+      case '1W':
+        return '7D';
+      case '7D':
+        return '7D';
+      case '1M':
+        return '1M';
+      case '1Y':
+        return '1Y';
+      case '5Y':
+        return '5Y';
+      default:
+        return '7D';
+    }
+  }
 
   final List<Map<String, dynamic>> trendHistoryData = [
     {
@@ -184,6 +345,7 @@ class _TrendScreenState extends State<TrendScreen> {
                             selectedCoinSymbol = coin['symbol'];
                             showDropdown = false;
                           });
+                          _loadTrendData();
                         },
                         child: Container(
                           padding: EdgeInsets.symmetric(
@@ -226,7 +388,7 @@ class _TrendScreenState extends State<TrendScreen> {
                                 ),
                               ),
                               Text(
-                                coin['accuracy'],
+                                _getRealTimeAccuracy(coin['symbol']),
                                 style: AppTextStyles.ktwhite14500.copyWith(
                                   color: AppColors.kgreen,
                                   fontSize: 12.sp,
@@ -537,10 +699,31 @@ class _TrendScreenState extends State<TrendScreen> {
   }
 
   String _getSelectedCoinAccuracy() {
-    final coin = availableCoins.firstWhere(
-      (c) => c['symbol'] == selectedCoinSymbol,
-    );
-    return coin['accuracy'];
+    if (_realTimeAccuracy.containsKey(selectedCoinSymbol)) {
+      return '${_realTimeAccuracy[selectedCoinSymbol]!.toStringAsFixed(1)}%';
+    }
+    if (_currentTrends != null) {
+      // API already returns accuracy as percentage (e.g., 0.86 = 86%)
+      return '${(_currentTrends!.accuracy * 100).toStringAsFixed(0)}%';
+    }
+    return '86%'; // Default fallback
+  }
+
+  String _getRealTimeAccuracy(String symbol) {
+    if (_realTimeAccuracy.containsKey(symbol)) {
+      return '${_realTimeAccuracy[symbol]!.toStringAsFixed(1)}%';
+    }
+    // Default fallback values based on symbol
+    switch (symbol) {
+      case 'BTC': return '86.9%';
+      case 'ETH': return '78.5%';
+      case 'NVDA': return '82.1%';
+      case 'AAPL': return '75.3%';
+      case 'MSFT': return '79.8%';
+      case 'GDP': return '71.2%';
+      case 'CPI': return '68.7%';
+      default: return '75.0%';
+    }
   }
 
   Widget _buildChart() {
@@ -698,8 +881,8 @@ class _TrendScreenState extends State<TrendScreen> {
                 height: 1.h,
               ),
               12.verticalSpace,
-              // Table Rows
-              ...trendHistoryData.map(
+              // Table Rows - Use real-time data when available, fallback to static data
+              ...(_realTimeTrendHistory.isNotEmpty ? _realTimeTrendHistory : trendHistoryData).map(
                     (data) => Padding(
                   padding: EdgeInsets.only(bottom: 8.h), // Spacing between rows
                   child: Row(
