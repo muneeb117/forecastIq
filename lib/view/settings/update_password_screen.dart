@@ -1,3 +1,4 @@
+import '../../core/helpers/message_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -103,46 +104,36 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
                   final confirmPassword = _confirmPasswordController.text.trim();
 
                   if (currentPassword.isEmpty) {
-                    Get.snackbar(
-                      'Error',
+                    MessageHelper.showError(
                       'Please enter your current password',
-                      snackPosition: SnackPosition.TOP,
                     );
                     return;
                   }
 
                   if (newPassword.isEmpty) {
-                    Get.snackbar(
-                      'Error',
+                    MessageHelper.showError(
                       'Please enter a new password',
-                      snackPosition: SnackPosition.TOP,
                     );
                     return;
                   }
 
                   if (newPassword.length < 8) {
-                    Get.snackbar(
-                      'Error',
+                    MessageHelper.showError(
                       'Password must be at least 8 characters long',
-                      snackPosition: SnackPosition.TOP,
                     );
                     return;
                   }
 
                   if (newPassword != confirmPassword) {
-                    Get.snackbar(
-                      'Error',
+                    MessageHelper.showError(
                       'New password and confirmation do not match',
-                      snackPosition: SnackPosition.TOP,
                     );
                     return;
                   }
 
                   if (newPassword == currentPassword) {
-                    Get.snackbar(
-                      'Error',
+                    MessageHelper.showError(
                       'New password must be different from current password',
-                      snackPosition: SnackPosition.TOP,
                     );
                     return;
                   }

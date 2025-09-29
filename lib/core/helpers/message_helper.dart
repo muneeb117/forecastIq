@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:flutter_icon_snackbar/flutter_icon_snackbar.dart';
 import '../constants/colors.dart';
 
 /// Centralized helper class for user messaging operations
@@ -10,130 +11,45 @@ class MessageHelper {
 
   /// Show success message
   static void showSuccess(String message, {String? title, Duration? duration}) {
-    Get.snackbar(
-      title ?? '✅ Success',
-      message,
-      snackPosition: SnackPosition.TOP,
-      backgroundColor: AppColors.kgreen.withOpacity(0.1),
-      colorText: AppColors.kgreen,
+    IconSnackBar.show(
+      Get.context!,
+      snackBarType: SnackBarType.success,
+      label: message,
       duration: duration ?? const Duration(seconds: 3),
-      margin: EdgeInsets.all(16.w),
-      borderRadius: 8.r,
-      icon: Icon(
-        Icons.check_circle,
-        color: AppColors.kgreen,
-        size: 24.r,
-      ),
     );
   }
 
   /// Show error message
   static void showError(String message, {String? title, Duration? duration}) {
-    Get.snackbar(
-      title ?? '❌ Error',
-      message,
-      snackPosition: SnackPosition.TOP,
-      backgroundColor: AppColors.kred.withOpacity(0.1),
-      colorText: AppColors.kred,
+    IconSnackBar.show(
+      Get.context!,
+      snackBarType: SnackBarType.fail,
+      label: message,
       duration: duration ?? const Duration(seconds: 4),
-      margin: EdgeInsets.all(16.w),
-      borderRadius: 8.r,
-      icon: Icon(
-        Icons.error,
-        color: AppColors.kred,
-        size: 24.r,
-      ),
     );
   }
 
   /// Show warning message
   static void showWarning(String message, {String? title, Duration? duration}) {
-    Get.snackbar(
-      title ?? '⚠️ Warning',
-      message,
-      snackPosition: SnackPosition.TOP,
-      backgroundColor: AppColors.kyellow.withOpacity(0.1),
-      colorText: AppColors.kyellow,
+    IconSnackBar.show(
+      Get.context!,
+      snackBarType: SnackBarType.alert,
+      label: message,
       duration: duration ?? const Duration(seconds: 3),
-      margin: EdgeInsets.all(16.w),
-      borderRadius: 8.r,
-      icon: Icon(
-        Icons.warning,
-        color: AppColors.kyellow,
-        size: 24.r,
-      ),
     );
   }
 
   /// Show info message
   static void showInfo(String message, {String? title, Duration? duration}) {
-    Get.snackbar(
-      title ?? 'ℹ️ Info',
-      message,
-      snackPosition: SnackPosition.TOP,
-      backgroundColor: AppColors.kprimary.withOpacity(0.1),
-      colorText: AppColors.kprimary,
+    IconSnackBar.show(
+      Get.context!,
+      snackBarType: SnackBarType.alert,
+      label: message,
       duration: duration ?? const Duration(seconds: 3),
-      margin: EdgeInsets.all(16.w),
-      borderRadius: 8.r,
-      icon: Icon(
-        Icons.info,
-        color: AppColors.kprimary,
-        size: 24.r,
-      ),
     );
   }
 
-  /// Show loading message
-  static void showLoading(String message, {String? title}) {
-    Get.snackbar(
-      title ?? 'Loading...',
-      message,
-      snackPosition: SnackPosition.TOP,
-      backgroundColor: AppColors.kwhite2.withOpacity(0.1),
-      colorText: AppColors.kwhite,
-      duration: const Duration(seconds: 30), // Long duration for loading
-      margin: EdgeInsets.all(16.w),
-      borderRadius: 8.r,
-      showProgressIndicator: true,
-      icon: SizedBox(
-        width: 24.r,
-        height: 24.r,
-        child: CircularProgressIndicator(
-          color: AppColors.kprimary,
-          strokeWidth: 2,
-        ),
-      ),
-    );
-  }
 
-  /// Show custom snackbar with color
-  static void showCustom({
-    required String title,
-    required String message,
-    required Color color,
-    IconData? icon,
-    Duration? duration,
-    SnackPosition? position,
-  }) {
-    Get.snackbar(
-      title,
-      message,
-      snackPosition: position ?? SnackPosition.TOP,
-      backgroundColor: color.withOpacity(0.1),
-      colorText: color,
-      duration: duration ?? const Duration(seconds: 3),
-      margin: EdgeInsets.all(16.w),
-      borderRadius: 8.r,
-      icon: icon != null
-          ? Icon(
-              icon,
-              color: color,
-              size: 24.r,
-            )
-          : null,
-    );
-  }
 
   /// Show confirmation dialog
   static Future<bool?> showConfirmation({

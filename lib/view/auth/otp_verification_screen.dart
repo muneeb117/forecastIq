@@ -1,3 +1,4 @@
+import '../../core/helpers/message_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -66,10 +67,8 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
         .join();
 
     if (otp.length != 6) {
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         'Please enter a valid 6-digit OTP',
-        snackPosition: SnackPosition.TOP,
       );
       return;
     }
@@ -112,10 +111,8 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
         break;
 
       default:
-        Get.snackbar(
-          'Error',
+        MessageHelper.showError(
           'Invalid OTP type',
-          snackPosition: SnackPosition.TOP,
         );
     }
   }

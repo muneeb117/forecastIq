@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import '../core/helpers/message_helper.dart';
 import '../services/auth_service.dart';
 
 class ProfileController extends GetxController {
@@ -53,10 +54,8 @@ class ProfileController extends GetxController {
         selectedImage.value = File(image.path);
       }
     } catch (e) {
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         'Failed to capture image: ${e.toString()}',
-        snackPosition: SnackPosition.TOP,
       );
     }
   }
@@ -74,10 +73,8 @@ class ProfileController extends GetxController {
         selectedImage.value = File(image.path);
       }
     } catch (e) {
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         'Failed to pick image: ${e.toString()}',
-        snackPosition: SnackPosition.TOP,
       );
     }
   }
@@ -166,17 +163,13 @@ class ProfileController extends GetxController {
 
       if (success) {
         selectedImage.value = null;
-        Get.snackbar(
-          'Success',
+        MessageHelper.showSuccess(
           'Profile updated successfully!',
-          snackPosition: SnackPosition.TOP,
         );
       }
     } catch (e) {
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         'Failed to update profile: ${e.toString()}',
-        snackPosition: SnackPosition.TOP,
       );
     } finally {
       isUpdating.value = false;
@@ -193,17 +186,13 @@ class ProfileController extends GetxController {
       );
 
       if (success) {
-        Get.snackbar(
-          'Success',
+        MessageHelper.showSuccess(
           'Email update initiated! Check your new email for confirmation.',
-          snackPosition: SnackPosition.TOP,
         );
       }
     } catch (e) {
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         'Failed to update email: ${e.toString()}',
-        snackPosition: SnackPosition.TOP,
       );
     } finally {
       isUpdating.value = false;
@@ -220,17 +209,13 @@ class ProfileController extends GetxController {
       );
 
       if (success) {
-        Get.snackbar(
-          'Success',
+        MessageHelper.showSuccess(
           'Password updated successfully!',
-          snackPosition: SnackPosition.TOP,
         );
       }
     } catch (e) {
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         'Failed to update password: ${e.toString()}',
-        snackPosition: SnackPosition.TOP,
       );
     } finally {
       isUpdating.value = false;
@@ -244,10 +229,8 @@ class ProfileController extends GetxController {
       await _authService.signOut();
       Get.offAllNamed('/login');
     } catch (e) {
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         'Failed to sign out: ${e.toString()}',
-        snackPosition: SnackPosition.TOP,
       );
     } finally {
       isLoading.value = false;

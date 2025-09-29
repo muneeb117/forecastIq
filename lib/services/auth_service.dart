@@ -1,3 +1,4 @@
+import '../core/helpers/message_helper.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:get/get.dart';
 import 'dart:io';
@@ -39,26 +40,20 @@ class AuthService extends GetxController {
       );
 
       if (response.user != null) {
-        Get.snackbar(
-          'Success',
+        MessageHelper.showSuccess(
           'Account created successfully! Please check your email for OTP verification.',
-          snackPosition: SnackPosition.TOP,
         );
       }
 
       return response;
     } on AuthException catch (e) {
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         e.message,
-        snackPosition: SnackPosition.TOP,
       );
       return null;
     } catch (e) {
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         'An unexpected error occurred',
-        snackPosition: SnackPosition.TOP,
       );
       return null;
     } finally {
@@ -79,26 +74,20 @@ class AuthService extends GetxController {
       );
 
       if (response.user != null) {
-        Get.snackbar(
-          'Success',
+        MessageHelper.showSuccess(
           'Signed in successfully!',
-          snackPosition: SnackPosition.TOP,
         );
       }
 
       return response;
     } on AuthException catch (e) {
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         e.message,
-        snackPosition: SnackPosition.TOP,
       );
       return null;
     } catch (e) {
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         'An unexpected error occurred',
-        snackPosition: SnackPosition.TOP,
       );
       return null;
     } finally {
@@ -146,10 +135,8 @@ class AuthService extends GetxController {
 
       if (googleUser == null) {
         print('❌ No Google user found after trying all client IDs');
-        Get.snackbar(
-          'Error',
+        MessageHelper.showError(
           'Google Sign-in was cancelled or failed',
-          snackPosition: SnackPosition.TOP,
         );
         isLoading.value = false;
         return null;
@@ -179,10 +166,8 @@ class AuthService extends GetxController {
 
       if (response.user != null) {
         print('✅ Supabase authentication successful!');
-        Get.snackbar(
-          'Success',
+        MessageHelper.showSuccess(
           'Signed in with Google successfully!',
-          snackPosition: SnackPosition.TOP,
         );
       } else {
         print('❌ Supabase authentication failed - no user returned');
@@ -191,10 +176,9 @@ class AuthService extends GetxController {
       return response;
     } on AuthException catch (e) {
       print('❌ AuthException: ${e.message}');
-      Get.snackbar(
-        'Authentication Error',
+      MessageHelper.showError(
         e.message,
-        snackPosition: SnackPosition.TOP,
+        title: 'Authentication Error',
       );
       return null;
     } on PlatformException catch (e) {
@@ -218,18 +202,14 @@ class AuthService extends GetxController {
           errorMessage = 'Google Sign-in error: ${e.message ?? e.code}';
       }
 
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         errorMessage,
-        snackPosition: SnackPosition.TOP,
       );
       return null;
     } catch (e) {
       print('❌ Unexpected error: $e');
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         'Google Sign-in failed: $e',
-        snackPosition: SnackPosition.TOP,
       );
       return null;
     } finally {
@@ -241,10 +221,8 @@ class AuthService extends GetxController {
   Future<AuthResponse?> signInWithApple() async {
     try {
       if (!Platform.isIOS) {
-        Get.snackbar(
-          'Error',
+        MessageHelper.showError(
           'Apple Sign-in is only available on iOS devices',
-          snackPosition: SnackPosition.TOP,
         );
         return null;
       }
@@ -274,26 +252,20 @@ class AuthService extends GetxController {
       );
 
       if (response.user != null) {
-        Get.snackbar(
-          'Success',
+        MessageHelper.showSuccess(
           'Signed in with Apple successfully!',
-          snackPosition: SnackPosition.TOP,
         );
       }
 
       return response;
     } on AuthException catch (e) {
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         e.message,
-        snackPosition: SnackPosition.TOP,
       );
       return null;
     } catch (e) {
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         'Apple Sign-in failed: $e',
-        snackPosition: SnackPosition.TOP,
       );
       return null;
     } finally {
@@ -311,22 +283,16 @@ class AuthService extends GetxController {
     try {
       isLoading.value = true;
       await _supabase.auth.signOut();
-      Get.snackbar(
-        'Success',
+      MessageHelper.showSuccess(
         'Signed out successfully!',
-        snackPosition: SnackPosition.TOP,
       );
     } on AuthException catch (e) {
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         e.message,
-        snackPosition: SnackPosition.TOP,
       );
     } catch (e) {
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         'An unexpected error occurred',
-        snackPosition: SnackPosition.TOP,
       );
     } finally {
       isLoading.value = false;
@@ -341,17 +307,13 @@ class AuthService extends GetxController {
         throw 'No user is currently signed in.';
       }
       await _supabase.from('users').delete().eq('id', userId);
-      Get.snackbar(
-        'Success',
+      MessageHelper.showSuccess(
         'Account deleted successfully!',
-        snackPosition: SnackPosition.TOP,
       );
       await signOut();
     } catch (e) {
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         'An unexpected error occurred while deleting the account.',
-        snackPosition: SnackPosition.TOP,
       );
     } finally {
       isLoading.value = false;
@@ -368,24 +330,18 @@ class AuthService extends GetxController {
         redirectTo: null, // No redirect needed for OTP
       );
 
-      Get.snackbar(
-        'Success',
+      MessageHelper.showSuccess(
         'Password reset OTP sent! Please check your inbox.',
-        snackPosition: SnackPosition.TOP,
       );
       return true;
     } on AuthException catch (e) {
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         e.message,
-        snackPosition: SnackPosition.TOP,
       );
       return false;
     } catch (e) {
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         'An unexpected error occurred',
-        snackPosition: SnackPosition.TOP,
       );
       return false;
     } finally {
@@ -408,26 +364,20 @@ class AuthService extends GetxController {
       );
 
       if (response.user != null) {
-        Get.snackbar(
-          'Success',
+        MessageHelper.showSuccess(
           'OTP verified! You can now reset your password.',
-          snackPosition: SnackPosition.TOP,
         );
         return true;
       }
       return false;
     } on AuthException catch (e) {
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         e.message,
-        snackPosition: SnackPosition.TOP,
       );
       return false;
     } catch (e) {
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         'Invalid OTP or an error occurred',
-        snackPosition: SnackPosition.TOP,
       );
       return false;
     } finally {
@@ -450,26 +400,20 @@ class AuthService extends GetxController {
       );
 
       if (response.user != null) {
-        Get.snackbar(
-          'Success',
+        MessageHelper.showSuccess(
           'Email verified successfully! You can now sign in.',
-          snackPosition: SnackPosition.TOP,
         );
         return true;
       }
       return false;
     } on AuthException catch (e) {
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         e.message,
-        snackPosition: SnackPosition.TOP,
       );
       return false;
     } catch (e) {
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         'Invalid OTP or an error occurred',
-        snackPosition: SnackPosition.TOP,
       );
       return false;
     } finally {
@@ -496,26 +440,20 @@ class AuthService extends GetxController {
         currentUser.value = response.user;
         currentUser.refresh();
 
-        Get.snackbar(
-          'Success',
+        MessageHelper.showSuccess(
           'Email updated successfully!',
-          snackPosition: SnackPosition.TOP,
         );
         return true;
       }
       return false;
     } on AuthException catch (e) {
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         e.message,
-        snackPosition: SnackPosition.TOP,
       );
       return false;
     } catch (e) {
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         'Invalid OTP or an error occurred',
-        snackPosition: SnackPosition.TOP,
       );
       return false;
     } finally {
@@ -552,24 +490,18 @@ class AuthService extends GetxController {
           throw Exception('Invalid OTP type');
       }
 
-      Get.snackbar(
-        'Success',
+      MessageHelper.showSuccess(
         'OTP resent successfully! Please check your inbox.',
-        snackPosition: SnackPosition.TOP,
       );
       return true;
     } on AuthException catch (e) {
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         e.message,
-        snackPosition: SnackPosition.TOP,
       );
       return false;
     } catch (e) {
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         'Failed to resend OTP: $e',
-        snackPosition: SnackPosition.TOP,
       );
       return false;
     } finally {
@@ -590,24 +522,18 @@ class AuthService extends GetxController {
         UserAttributes(password: newPassword),
       );
 
-      Get.snackbar(
-        'Success',
+      MessageHelper.showSuccess(
         'Password updated successfully!',
-        snackPosition: SnackPosition.TOP,
       );
       return true;
     } on AuthException catch (e) {
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         e.message,
-        snackPosition: SnackPosition.TOP,
       );
       return false;
     } catch (e) {
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         'An unexpected error occurred',
-        snackPosition: SnackPosition.TOP,
       );
       return false;
     } finally {
@@ -623,24 +549,18 @@ class AuthService extends GetxController {
         UserAttributes(email: newEmail),
       );
 
-      Get.snackbar(
-        'Success',
+      MessageHelper.showSuccess(
         'Email update initiated! Check your new email for confirmation.',
-        snackPosition: SnackPosition.TOP,
       );
       return true;
     } on AuthException catch (e) {
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         e.message,
-        snackPosition: SnackPosition.TOP,
       );
       return false;
     } catch (e) {
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         'An unexpected error occurred: $e',
-        snackPosition: SnackPosition.TOP,
       );
       return false;
     } finally {
@@ -679,29 +599,23 @@ class AuthService extends GetxController {
         currentUser.refresh();
       }
 
-      Get.snackbar(
-        'Success',
+      MessageHelper.showSuccess(
         profileImage != null && profileImageUrl != null
           ? 'Profile and image updated successfully!'
           : profileImage != null
             ? 'Profile updated! Image upload failed - check storage configuration.'
             : 'Profile updated successfully!',
-        snackPosition: SnackPosition.TOP,
       );
 
       return profileImageUrl != null || profileImage == null;
     } on AuthException catch (e) {
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         e.message,
-        snackPosition: SnackPosition.TOP,
       );
       return false;
     } catch (e) {
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         'An unexpected error occurred: $e',
-        snackPosition: SnackPosition.TOP,
       );
       return false;
     } finally {
@@ -754,10 +668,8 @@ class AuthService extends GetxController {
     } catch (e, stackTrace) {
       print('Exception during image upload: $e');
       print('Stack trace: $stackTrace');
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         'Failed to upload profile image: $e',
-        snackPosition: SnackPosition.TOP,
       );
       return null;
     }

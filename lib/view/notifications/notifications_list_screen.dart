@@ -1,3 +1,4 @@
+import '../../core/helpers/message_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -420,13 +421,9 @@ class _NotificationsListScreenState extends State<NotificationsListScreen> {
       // Clear all notifications
       await _notificationService.clearNotificationHistory();
 
-      Get.snackbar(
-        '🗑️ Notifications Cleared',
+      MessageHelper.showSuccess(
         'All notifications have been cleared successfully',
-        snackPosition: SnackPosition.TOP,
-        duration: const Duration(seconds: 2),
-        backgroundColor: AppColors.kred.withValues(alpha: 0.1),
-        colorText: AppColors.kred,
+        title: '🗑️ Notifications Cleared',
       );
     }
   }

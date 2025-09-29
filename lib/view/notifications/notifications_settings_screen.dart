@@ -1,3 +1,4 @@
+import '../../core/helpers/message_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -76,16 +77,14 @@ class _NotificationsSettingsScreenState extends State<NotificationsSettingsScree
                         });
 
                         if (value) {
-                          Get.snackbar(
-                            '🔔 Notifications Enabled',
+                          MessageHelper.showSuccess(
                             'You will now receive crypto alerts and updates',
-                            snackPosition: SnackPosition.TOP,
+                            title: '🔔 Notifications Enabled',
                           );
                         } else {
-                          Get.snackbar(
-                            '🔕 Notifications Disabled',
+                          MessageHelper.showInfo(
                             'All notifications have been turned off',
-                            snackPosition: SnackPosition.TOP,
+                            title: '🔕 Notifications Disabled',
                           );
                           _notificationService.clearAllNotifications();
                         }
@@ -123,16 +122,14 @@ class _NotificationsSettingsScreenState extends State<NotificationsSettingsScree
                         });
 
                         if (value) {
-                          Get.snackbar(
-                            '🔊 Sound & Vibration On',
+                          MessageHelper.showInfo(
                             'Notifications will play sound and vibrate',
-                            snackPosition: SnackPosition.TOP,
+                            title: '🔊 Sound & Vibration On',
                           );
                         } else {
-                          Get.snackbar(
-                            '🔇 Sound & Vibration Off',
+                          MessageHelper.showInfo(
                             'Notifications will be silent',
-                            snackPosition: SnackPosition.TOP,
+                            title: '🔇 Sound & Vibration Off',
                           );
                         }
                       },
@@ -197,10 +194,9 @@ class _NotificationsSettingsScreenState extends State<NotificationsSettingsScree
 
   void _testAllAlerts() {
     if (!_notificationsEnabled) {
-      Get.snackbar(
-        '❌ Notifications Disabled',
+      MessageHelper.showWarning(
         'Please enable notifications first to test alerts',
-        snackPosition: SnackPosition.TOP,
+        title: '❌ Notifications Disabled',
       );
       return;
     }

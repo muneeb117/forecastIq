@@ -1,3 +1,4 @@
+import '../core/helpers/message_helper.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
@@ -268,10 +269,9 @@ class NotificationService extends GetxController {
       );
     }
 
-    Get.snackbar(
-      'Notification Scheduled',
+    MessageHelper.showInfo(
       'You will receive a notification in ${_formatDuration(delay)}',
-      snackPosition: SnackPosition.TOP,
+      title: 'Notification Scheduled',
     );
   }
 
@@ -281,10 +281,9 @@ class NotificationService extends GetxController {
     scheduledNotifications.removeWhere((n) => n.id == id);
     saveScheduledNotifications();
 
-    Get.snackbar(
-      'Notification Cancelled',
+    MessageHelper.showInfo(
       'Scheduled notification has been cancelled',
-      snackPosition: SnackPosition.TOP,
+      title: 'Notification Cancelled',
     );
   }
 
@@ -660,10 +659,9 @@ class NotificationService extends GetxController {
     scheduledNotifications.clear();
     await saveScheduledNotifications();
 
-    Get.snackbar(
-      'Notifications Cleared',
+    MessageHelper.showInfo(
       'All notifications have been cancelled',
-      snackPosition: SnackPosition.TOP,
+      title: 'Notifications Cleared',
     );
   }
 

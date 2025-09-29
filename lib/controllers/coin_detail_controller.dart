@@ -6,6 +6,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
+import '../core/helpers/message_helper.dart';
 import '../services/favorites_service.dart';
 import '../services/websocket_service.dart';
 import '../models/models.dart';
@@ -100,11 +101,9 @@ class CoinDetailController extends GetxController {
       if (isFavorite.value) {
         await _favoritesService.removeFromFavorites(symbol);
         isFavorite.value = false;
-        Get.snackbar(
-          'Removed',
+        MessageHelper.showInfo(
           '$symbol removed from favorites',
-          snackPosition: SnackPosition.TOP,
-          duration: Duration(seconds: 2),
+          title: 'Removed',
         );
       } else {
         await _favoritesService.addToFavorites(
@@ -113,18 +112,14 @@ class CoinDetailController extends GetxController {
           type: assetClass,
         );
         isFavorite.value = true;
-        Get.snackbar(
-          'Added',
+        MessageHelper.showSuccess(
           '$symbol added to favorites',
-          snackPosition: SnackPosition.TOP,
-          duration: Duration(seconds: 2),
+          title: 'Added',
         );
       }
     } catch (e) {
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         'Failed to update favorites: ${e.toString()}',
-        snackPosition: SnackPosition.TOP,
       );
     }
   }
@@ -203,10 +198,9 @@ class CoinDetailController extends GetxController {
     errorMessage.value = error.toString();
     isLoading.value = false;
 
-    Get.snackbar(
-      'Connection Error',
+    MessageHelper.showError(
       'Failed to load chart data. Retrying...',
-      snackPosition: SnackPosition.TOP,
+      title: 'Connection Error',
     );
 
     // Retry connection after delay
@@ -240,10 +234,9 @@ class CoinDetailController extends GetxController {
     try {
       // Check if chart data is available
       if (isLoading.value || hasError.value || _chartData == null) {
-        Get.snackbar(
-          'Chart Not Ready',
+        MessageHelper.showInfo(
           'Please wait for chart to load.',
-          snackPosition: SnackPosition.TOP,
+          title: 'Chart Not Ready',
         );
         return;
       }
@@ -273,21 +266,15 @@ class CoinDetailController extends GetxController {
         // Clean up temporary file
         await imageFile.delete();
 
-        Get.snackbar(
-          'Success',
+        MessageHelper.showSuccess(
           'Chart saved to gallery successfully!',
-          snackPosition: SnackPosition.TOP,
-          duration: Duration(seconds: 2),
         );
       } else {
         throw Exception('Failed to capture chart');
       }
     } catch (e) {
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         'Failed to save chart: ${e.toString()}',
-        snackPosition: SnackPosition.TOP,
-        duration: Duration(seconds: 3),
       );
     }
   }

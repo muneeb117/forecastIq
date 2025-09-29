@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import '../core/helpers/message_helper.dart';
 import '../services/auth_service.dart';
 import '../services/favorites_service.dart';
 import '../services/websocket_service.dart';
@@ -34,11 +35,9 @@ class AppController extends GetxController {
     ever(webSocketService.isConnected.obs, (bool connected) {
       isConnected.value = connected;
       if (!connected) {
-        Get.snackbar(
-          'Connection Lost',
+        MessageHelper.showWarning(
           'Trying to reconnect...',
-          snackPosition: SnackPosition.TOP,
-          duration: Duration(seconds: 2),
+          title: 'Connection Lost',
         );
       }
     });

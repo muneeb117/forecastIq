@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'dart:async';
+import '../core/helpers/message_helper.dart';
 import '../models/models.dart';
 import '../services/trading_ai_service.dart';
 import '../services/websocket_service.dart';
@@ -102,10 +103,8 @@ abstract class AssetListController extends GetxController {
       errorMessage.value = e.toString();
       isLoading.value = false;
 
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         'Failed to load market data: \${e.toString()}',
-        snackPosition: SnackPosition.TOP,
       );
     }
   }

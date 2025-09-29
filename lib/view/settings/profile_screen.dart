@@ -1,3 +1,4 @@
+import '../../core/helpers/message_helper.dart';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -104,10 +105,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       );
     } catch (e) {
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         'Failed to pick image: $e',
-        snackPosition: SnackPosition.TOP,
       );
     }
   }

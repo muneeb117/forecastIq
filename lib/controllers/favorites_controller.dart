@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import '../core/helpers/message_helper.dart';
 import '../services/favorites_service.dart';
 
 import '../core/constants/images.dart';
@@ -62,10 +63,8 @@ class FavoritesController extends GetxController {
         await addFavorite(symbol, name, assetClass);
       }
     } catch (e) {
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         'Failed to update favorites: ${e.toString()}',
-        snackPosition: SnackPosition.TOP,
       );
     }
   }
@@ -80,17 +79,13 @@ class FavoritesController extends GetxController {
       );
       favoriteStatus[symbol] = true;
 
-      Get.snackbar(
-        'Added to Favorites',
+      MessageHelper.showSuccess(
         '$symbol has been added to your favorites',
-        snackPosition: SnackPosition.TOP,
-        duration: Duration(seconds: 2),
+        title: 'Added to Favorites',
       );
     } catch (e) {
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         'Failed to add to favorites: ${e.toString()}',
-        snackPosition: SnackPosition.TOP,
       );
     }
   }
@@ -101,17 +96,13 @@ class FavoritesController extends GetxController {
       await _favoritesService.removeFromFavorites(symbol);
       favoriteStatus[symbol] = false;
 
-      Get.snackbar(
-        'Removed from Favorites',
+      MessageHelper.showInfo(
         '$symbol has been removed from your favorites',
-        snackPosition: SnackPosition.TOP,
-        duration: Duration(seconds: 2),
+        title: 'Removed from Favorites',
       );
     } catch (e) {
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         'Failed to remove from favorites: ${e.toString()}',
-        snackPosition: SnackPosition.TOP,
       );
     }
   }
@@ -129,19 +120,15 @@ class FavoritesController extends GetxController {
           favoriteStatus.clear();
           Get.back();
 
-          Get.snackbar(
-            'Favorites Cleared',
+          MessageHelper.showSuccess(
             'All favorites have been removed',
-            snackPosition: SnackPosition.TOP,
-            duration: Duration(seconds: 2),
+            title: 'Favorites Cleared',
           );
         },
       );
     } catch (e) {
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         'Failed to clear favorites: ${e.toString()}',
-        snackPosition: SnackPosition.TOP,
       );
     }
   }

@@ -1,3 +1,4 @@
+import '../../core/helpers/message_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -106,10 +107,8 @@ class _UpdateEmailScreenState extends State<UpdateEmailScreen> {
                   final newEmail = _newEmailController.text.trim();
 
                   if (newEmail.isEmpty) {
-                    Get.snackbar(
-                      'Error',
+                    MessageHelper.showError(
                       'Please enter a new email address',
-                      snackPosition: SnackPosition.TOP,
                     );
                     return;
                   }
@@ -117,19 +116,15 @@ class _UpdateEmailScreenState extends State<UpdateEmailScreen> {
                   // Email validation regex
                   final emailRegex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
                   if (!emailRegex.hasMatch(newEmail)) {
-                    Get.snackbar(
-                      'Error',
+                    MessageHelper.showError(
                       'Please enter a valid email address',
-                      snackPosition: SnackPosition.TOP,
                     );
                     return;
                   }
 
                   if (newEmail == _authService.userEmail) {
-                    Get.snackbar(
-                      'Error',
+                    MessageHelper.showError(
                       'New email must be different from current email',
-                      snackPosition: SnackPosition.TOP,
                     );
                     return;
                   }

@@ -1,3 +1,4 @@
+import '../core/helpers/message_helper.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -178,10 +179,8 @@ class TrendController extends GetxController {
       errorMessage.value = e.toString();
       print('❌ Error loading trend data: $e');
 
-      Get.snackbar(
-        'Error',
+      MessageHelper.showError(
         'Failed to load trend data: ${e.toString()}',
-        snackPosition: SnackPosition.TOP,
       );
     } finally {
       isLoading.value = false;
