@@ -333,6 +333,31 @@ class AuthService extends GetxController {
     }
   }
 
+  Future<void> deleteAccount() async {
+    try {
+      isLoading.value = true;
+      final userId = currentUser.value?.id;
+      if (userId == null) {
+        throw 'No user is currently signed in.';
+      }
+      await _supabase.from('users').delete().eq('id', userId);
+      Get.snackbar(
+        'Success',
+        'Account deleted successfully!',
+        snackPosition: SnackPosition.TOP,
+      );
+      await signOut();
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'An unexpected error occurred while deleting the account.',
+        snackPosition: SnackPosition.TOP,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   // OTP-based password reset (send OTP to email)
   Future<bool> sendPasswordResetOTP({required String email}) async {
     try {

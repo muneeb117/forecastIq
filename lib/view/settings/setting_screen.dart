@@ -15,6 +15,7 @@ import './term_and_condition_screen.dart';
 import './privacy_policy_screen.dart';
 import './about_app_screen.dart';
 import './security_screen.dart';
+import './delete_account_screen.dart';
 import '../notifications/notifications_list_screen.dart';
 import '../../core/constants/images.dart';
 import '../../widgets/custom_button.dart';
@@ -177,28 +178,38 @@ class _SettingScreenState extends State<SettingScreen> {
 
               ]),
               12.verticalSpace,
-              Row(
-                children: [
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const DeleteAccountScreen(),
+                    ),
+                  );
+                },
+                child: Row(
+                  children: [
 
-                  CircleAvatar(
-                      radius: 22.r,
-                      backgroundColor: AppColors.kred.withOpacity(0.16),
-                      child: SvgPicture.asset(
-                        AppImages.delete,
-                        width: 24.w,
-                        height: 24.w,
-                      )
-                  ),
-                  14.horizontalSpace,
-                  Expanded(
-                    child: Text(
-                        "Delete Account",
-                        style: AppTextStyles.kblack14700.copyWith(
-                          color: AppColors.kred,
+                    CircleAvatar(
+                        radius: 22.r,
+                        backgroundColor: AppColors.kred.withOpacity(0.16),
+                        child: SvgPicture.asset(
+                          AppImages.delete,
+                          width: 24.w,
+                          height: 24.w,
                         )
                     ),
-                  ),
-                ],
+                    14.horizontalSpace,
+                    Expanded(
+                      child: Text(
+                          "Delete Account",
+                          style: AppTextStyles.kblack14700.copyWith(
+                            color: AppColors.kred,
+                          )
+                      ),
+                    ),
+                  ],
+                ),
               ),
 
               15.verticalSpace,
