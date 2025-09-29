@@ -76,8 +76,8 @@ class _PrivacyPolicyState extends State<PrivacyPolicy> {
                             AppImages.search,
                             width: 18.w,
                             height: 18.h,
-                            color:
-                            AppColors.kwhite, // Ensure icon color matches text
+                            colorFilter: ColorFilter.mode(
+                            AppColors.kwhite, BlendMode.srcIn), // Ensure icon color matches text
                             fit: BoxFit.contain, // Ensure proper scaling
                           ),
                         ),

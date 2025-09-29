@@ -27,7 +27,7 @@ class ControllerManager extends GetxController {
           _activeCoinControllers.remove(symbol);
 
         } catch (e) {
-
+          // Silently handle controller deletion errors
         }
       }
     }
@@ -40,7 +40,7 @@ class ControllerManager extends GetxController {
       _activeCoinControllers.remove(symbol);
 
     } catch (e) {
-
+      // Silently handle controller cleanup errors
     }
   }
 

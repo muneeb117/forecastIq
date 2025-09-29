@@ -53,7 +53,7 @@ class FavoritesService {
   SharedPreferences? _prefs;
 
   List<FavoriteItem> _favorites = [];
-  List<Function(List<FavoriteItem>)> _listeners = [];
+  final List<Function(List<FavoriteItem>)> _listeners = [];
 
   FavoritesService._();
 

@@ -6,14 +6,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:forcast/core/constants/images.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../core/constants/colors.dart';
 import '../../core/constants/fonts.dart';
 import '../../services/auth_service.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_textfield.dart';
-import '../../core/constants/images.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});

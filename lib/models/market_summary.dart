@@ -41,12 +41,6 @@ class MarketSummary {
     );
   }
 
-  static String _getAssetClassFromType(String type) {
-    if (type.contains('crypto')) return 'crypto';
-    if (type.contains('stock')) return 'stocks';
-    if (type.contains('macro')) return 'macro';
-    return 'unknown';
-  }
 
   // Helper getter for percentage change
   double get changePercentage24h => change24h;

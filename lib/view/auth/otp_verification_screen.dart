@@ -38,7 +38,6 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   int secondsRemaining = 60;
   bool canResend = false;
   final AuthService _authService = AuthService.instance;
-  bool _isVerifying = false;
 
   @override
   void initState() {

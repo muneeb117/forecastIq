@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import '../../core/constants/colors.dart';
 import '../../core/constants/fonts.dart';
 import '../../services/auth_service.dart';
@@ -192,7 +191,7 @@ class _SettingScreenState extends State<SettingScreen> {
 
                     CircleAvatar(
                         radius: 22.r,
-                        backgroundColor: AppColors.kred.withOpacity(0.16),
+                        backgroundColor: AppColors.kred.withValues(alpha: 0.16),
                         child: SvgPicture.asset(
                           AppImages.delete,
                           width: 24.w,
@@ -331,11 +330,9 @@ class _SettingScreenState extends State<SettingScreen> {
         return;
     }
     
-    if (screen != null) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => screen!),
-      );
-    }
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => screen!),
+    );
   }
 }

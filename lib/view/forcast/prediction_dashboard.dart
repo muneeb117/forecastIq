@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:fl_chart/fl_chart.dart';
 import '../../core/constants/colors.dart';
 import '../../models/asset_forecast.dart';
 import '../../models/asset_trends.dart';
@@ -183,7 +182,7 @@ class _PredictionDashboardState extends State<PredictionDashboard> with TickerPr
                   width: 40.w,
                   height: 40.w,
                   decoration: BoxDecoration(
-                    color: AppColors.kprimary.withOpacity(0.1),
+                    color: AppColors.kprimary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(20.r),
                   ),
                   child: Icon(
@@ -559,7 +558,6 @@ class _AssetDetailScreenState extends State<AssetDetailScreen> {
     if (forecast == null) return const SizedBox();
 
     final isPositive = forecast!.change24h >= 0;
-    final changeColor = isPositive ? AppColors.kgreen : AppColors.kred;
 
     return Column(
       children: [
@@ -567,7 +565,7 @@ class _AssetDetailScreenState extends State<AssetDetailScreen> {
         Container(
           padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
           decoration: BoxDecoration(
-            color: _getDirectionColor(forecast!.forecastDirection).withOpacity(0.1),
+            color: _getDirectionColor(forecast!.forecastDirection).withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8.r),
           ),
           child: Row(
@@ -911,7 +909,7 @@ class _AssetDetailScreenState extends State<AssetDetailScreen> {
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: AppColors.kred.withOpacity(0.1),
+        color: AppColors.kred.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8.r),
       ),
       child: Row(

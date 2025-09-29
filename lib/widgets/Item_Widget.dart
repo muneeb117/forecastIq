@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 
 import '../core/constants/colors.dart';
 import '../core/constants/fonts.dart';
@@ -33,7 +32,7 @@ String formatPriceShort(String priceString) {
 }
 
 String _formatSinglePrice(String priceString) {
-  print(priceString);
+  //print(priceString);
   // Remove $ sign and any spaces
   String cleanPrice = priceString.replaceAll('\$', '').replaceAll(',', '').trim();
 

@@ -49,14 +49,11 @@ class _CoinDetailScreenState extends State<CoinDetailScreen> {
   final FavoritesService _favoritesService = FavoritesService.instance;
 
   ChartData? _chartData;
-  ChartUpdate? _latestChartUpdate;
   bool _isLoading = true;
-  bool _isUpdating = false;
   bool _hasError = false;
   String _errorMessage = '';
 
   // Current data for display
-  String _currentPrice = '\$0.00';
   String _confidence = '0%';
   String _predictedRange = '--';
   String _forecastDirection = 'HOLD';
@@ -231,29 +228,18 @@ class _CoinDetailScreenState extends State<CoinDetailScreen> {
 
       if (hasValidData) {
         setState(() {
-          _latestChartUpdate = chartUpdate;
           _chartData = chartUpdate.chartData;
           _isLoading = false;
           _hasError = false;
           _errorMessage = '';
-          _isUpdating = true;
 
           // Update display data
-          _currentPrice = '\$${chartUpdate.currentPrice.toStringAsFixed(2)}';
           _confidence = '${chartUpdate.confidence}%';
           _predictedRange = chartUpdate.predictedRange;
           _forecastDirection = chartUpdate.forecastDirection;
           _lastUpdated = chartUpdate.lastUpdated;
         });
 
-        // Clear updating indicator
-        Future.delayed(Duration(milliseconds: 800), () {
-          if (mounted) {
-            setState(() {
-              _isUpdating = false;
-            });
-          }
-        });
 
         //print('🎉 Chart updated successfully!');
       } else {
@@ -264,7 +250,7 @@ class _CoinDetailScreenState extends State<CoinDetailScreen> {
           _errorMessage = 'No chart data available for this timeframe';
         });
       }
-    } catch (e, stackTrace) {
+    } catch (e, _) {
       //print('❌ Error handling chart update: $e');
       //print('Stack trace: $stackTrace');
 
@@ -1038,7 +1024,7 @@ class ChartPainter extends CustomPainter {
 
     // Past data (grey line)
     final pastPaint = Paint()
-      ..color = Colors.grey.withOpacity(0.6)
+      ..color = Colors.grey.withValues(alpha: 0.6)
       ..strokeWidth = 2.0
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
@@ -1130,7 +1116,7 @@ class ChartPainter extends CustomPainter {
     // Paint styles for price dots and text
     final pastDotPaint = Paint()
       ..style = PaintingStyle.fill
-      ..color = Colors.grey.withOpacity(0.8);
+      ..color = Colors.grey.withValues(alpha: 0.8);
 
     final futureDotPaint = Paint()
       ..style = PaintingStyle.fill
@@ -1138,7 +1124,7 @@ class ChartPainter extends CustomPainter {
 
     // Text style for price labels
     final textStyle = TextStyle(
-      color: AppColors.kwhite.withOpacity(0.7),
+      color: AppColors.kwhite.withValues(alpha: 0.7),
       fontSize: 8.0,
       fontWeight: FontWeight.w500,
     );

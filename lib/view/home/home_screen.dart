@@ -10,7 +10,6 @@ import '../../models/models.dart';
 import '../../widgets/item_widget.dart';
 
 import '../../services/auth_service.dart';
-import '../../controllers/home_controller.dart';
 import '../notifications/notifications_list_screen.dart';
 
 class HomeScreen extends GetView<ForecastController> {

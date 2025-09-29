@@ -210,7 +210,7 @@ class AppTextStyles {
   static TextStyle kblack14400withOpacity400 = TextStyle(
     fontWeight: FontWeight.w400,
     fontSize: 14.sp,
-    color: AppColors.kblack.withOpacity(0.5),
+    color: AppColors.kblack.withValues(alpha: 0.5),
   );
 
   static TextStyle kblack14500 = TextStyle(
@@ -237,7 +237,7 @@ class AppTextStyles {
   static TextStyle kblack1640007 = TextStyle(
     fontWeight: FontWeight.w600,
     fontSize: 16.sp,
-    color: AppColors.kblack.withOpacity(0.7),
+    color: AppColors.kblack.withValues(alpha: 0.7),
   );
   static TextStyle kblack30500 = TextStyle(
     fontWeight: FontWeight.w500,
@@ -247,7 +247,7 @@ class AppTextStyles {
   static TextStyle kblack1250op500 = TextStyle(
     fontWeight: FontWeight.w500,
     fontSize: 12.0.sp,
-    color: AppColors.kblack.withOpacity(0.5),
+    color: AppColors.kblack.withValues(alpha: 0.5),
   );
   static TextStyle kblack12500 = TextStyle(
     fontFamily: 'Poppins',

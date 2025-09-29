@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
-import 'package:get/get_state_manager/src/simple/get_view.dart';
+import 'package:get/get.dart';
 import '../../core/constants/colors.dart';
 import '../../core/constants/fonts.dart';
 import '../../core/constants/images.dart';
@@ -90,7 +89,7 @@ class ForcastScreen extends GetView<ForecastController> {
                               AppImages.search,
                               width: 18.w,
                               height: 18.h,
-                              color: AppColors.kwhite,
+                              colorFilter: ColorFilter.mode(AppColors.kwhite, BlendMode.srcIn),
                               fit: BoxFit.contain,
                             ),
                           ),

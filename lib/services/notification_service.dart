@@ -113,31 +113,6 @@ class NotificationService extends GetxController {
     // Background notifications will be handled when app comes to foreground
   }
 
-  // Handle different notification actions
-  void _handleNotificationAction(Map<String, dynamic> data) {
-    final type = data['type'] as String?;
-
-    switch (type) {
-      case 'market_update':
-        // Navigate to market screen
-        Get.toNamed('/market');
-        break;
-      case 'price_alert':
-        // Navigate to specific coin
-        Get.toNamed('/coin/${data['coinId']}');
-        break;
-      case 'portfolio_update':
-        // Navigate to portfolio
-        Get.toNamed('/portfolio');
-        break;
-      case 'forecast_reminder':
-        // Navigate to forecasts
-        Get.toNamed('/forecast');
-        break;
-      default:
-        break;
-    }
-  }
 
   // Show immediate notification
   Future<void> showNotification({

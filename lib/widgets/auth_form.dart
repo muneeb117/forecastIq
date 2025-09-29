@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
 
 import '../core/constants/colors.dart';
 import '../core/constants/images.dart';
-import '../services/auth_service.dart';
 import 'custom_button.dart';
 import 'custom_textfield.dart';
 

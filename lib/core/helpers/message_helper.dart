@@ -241,7 +241,7 @@ class MessageHelper {
                   ],
                 ),
               ),
-              Divider(color: AppColors.kwhite2.withOpacity(0.3)),
+              Divider(color: AppColors.kwhite2.withValues(alpha: 0.3)),
             ],
             content,
           ],
@@ -257,7 +257,7 @@ class MessageHelper {
     Get.rawSnackbar(
       message: message,
       duration: const Duration(seconds: 2),
-      backgroundColor: color ?? AppColors.kwhite2.withOpacity(0.9),
+      backgroundColor: color ?? AppColors.kwhite2.withValues(alpha: 0.9),
       borderRadius: 8.r,
       margin: EdgeInsets.all(16.w),
       snackPosition: SnackPosition.BOTTOM,

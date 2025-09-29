@@ -5,10 +5,8 @@ import 'package:forcast/core/constants/images.dart';
 import 'package:get/get.dart';
 import '../../controllers/trend_controller.dart';
 import '../../core/constants/colors.dart';
-import '../../core/constants/colors.dart';
 import '../../core/constants/fonts.dart';
 import '../../models/trend_data_model.dart' as trend_models;
-import '../../controllers/trend_controller.dart';
 import '../notifications/notifications_list_screen.dart';
 
 class TrendScreen extends GetView<TrendController> {

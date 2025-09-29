@@ -170,7 +170,7 @@ class _NotificationsSettingsScreenState extends State<NotificationsSettingsScree
                         AppImages.forward,
                         width: 18.w,
                         height: 18.h,
-                        color: AppColors.kwhite,
+                        colorFilter: ColorFilter.mode(AppColors.kwhite, BlendMode.srcIn),
                       ),
                     ],
                   ),

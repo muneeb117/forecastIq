@@ -107,7 +107,6 @@ class AuthService extends GetxController {
       ];
 
       GoogleSignInAccount? googleUser;
-      GoogleSignIn? workingGoogleSignIn;
 
       // Try each client ID until one works
       for (String clientId in clientIds) {
@@ -124,7 +123,6 @@ class AuthService extends GetxController {
           googleUser = await googleSignIn.signIn();
           if (googleUser != null) {
             //print('✅ Google Sign-In successful with client ID: ${clientId.substring(0, 20)}...');
-            workingGoogleSignIn = googleSignIn;
             break;
           }
         } catch (e) {
@@ -665,7 +663,7 @@ class AuthService extends GetxController {
 
       //print('Upload response was empty');
       return null;
-    } catch (e, stackTrace) {
+    } catch (e, _) {
       //print('Exception during image upload: $e');
       //print('Stack trace: $stackTrace');
       MessageHelper.showError(

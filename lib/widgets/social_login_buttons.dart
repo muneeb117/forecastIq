@@ -33,7 +33,7 @@ class SocialLoginButtons extends StatelessWidget {
               backgroundColor: AppColors.ksecondary,
               width: double.infinity,
               svgIcon: AppImages.google,
-              borderColor: AppColors.kwhite.withOpacity(0.2),
+              borderColor: AppColors.kwhite.withValues(alpha: 0.2),
             )),
         8.verticalSpace,
         if (Platform.isIOS) ...[
@@ -51,7 +51,7 @@ class SocialLoginButtons extends StatelessWidget {
                 backgroundColor: AppColors.ksecondary,
                 width: double.infinity,
                 svgIcon: AppImages.apple,
-                borderColor: AppColors.kwhite.withOpacity(0.2),
+                borderColor: AppColors.kwhite.withValues(alpha: 0.2),
               )),
         ],
       ],

@@ -132,13 +132,13 @@ class ColorHelper {
   /// Get opacity variant of color
   /// Returns the color with specified opacity
   static Color withOpacity(Color color, double opacity) {
-    return color.withOpacity(opacity);
+    return color.withValues(alpha: opacity);
   }
 
   /// Get asset color with opacity
   /// Convenient method to get asset color with opacity
   static Color getAssetColorWithOpacity(String symbol, double opacity) {
-    return getAssetColor(symbol).withOpacity(opacity);
+    return getAssetColor(symbol).withValues(alpha: opacity);
   }
 
   /// Get complementary color
@@ -158,8 +158,8 @@ class ColorHelper {
     final baseColor = getAssetColor(symbol);
     return {
       'primary': baseColor,
-      'light': baseColor.withOpacity(0.3),
-      'lighter': baseColor.withOpacity(0.1),
+      'light': baseColor.withValues(alpha: 0.3),
+      'lighter': baseColor.withValues(alpha: 0.1),
       'dark': Color.lerp(baseColor, Colors.black, 0.3) ?? baseColor,
       'contrast': getComplementaryColor(baseColor),
     };
@@ -177,8 +177,8 @@ class ColorHelper {
     final baseColor = getNotificationTypeColor(type);
     return {
       'icon': baseColor,
-      'background': baseColor.withOpacity(0.2),
-      'border': baseColor.withOpacity(0.5),
+      'background': baseColor.withValues(alpha: 0.2),
+      'border': baseColor.withValues(alpha: 0.5),
     };
   }
 }

@@ -30,7 +30,7 @@ class AppColors {
   static const Color klightred = Color(0xFFFEEEEB);
   static const Color kred = Color(0xFFF15950);
   static const Color kgreentext = Color(0xFF23A26D);
-  static Color klightgreen = const Color(0xFF23A26D).withOpacity(0.1);
+  static Color klightgreen = const Color(0xFF23A26D).withValues(alpha: 0.1);
   static const Color kverylightgrey = Color(0xffEEEEEE);
   static const Color kicongrey = Color(0xff9E9E9E);
   static const Color kgreytext = Color(0xff707070);
@@ -52,14 +52,14 @@ class AppColors {
   static const Color kgrey9 = Color(0xFFF7F7FC);
   static const Color kgrey10 = Color(0xFF878787);
   static const Color kgrey11 = Color(0xFF8D9096);
-  static Color kgrey12 = const Color(0xff00000080).withOpacity(0.5);
+  static const Color kgrey12 = Color(0x80000000);
   static const Color kgreyfill = Color(0xFF262729);
   static const Color klightbeige = Color(0xFFF0E8D9);
   static const Color kbeige = Color(0xFFC19A5B);
   static const Color kyellow = Color(0xFFEFD700);
   static const Color kyellow2 = Color(0xFFE5A500);
   static const Color kgrey21 = Color(0xFFB5C1CE);
-  static const Color greytext8 = Color(0xfff94a3b8);
+  static const Color greytext8 = Color(0xFF94A3B8);
 
   static const Color kgrey13 = Color(0xFF545454);
   static const Color kgrey14 = Color(0xFFD9D9D9);

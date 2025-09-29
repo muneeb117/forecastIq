@@ -210,7 +210,7 @@ class _AlertsFrequencyScreenState extends State<AlertsFrequencyScreen> {
                                 decoration: InputDecoration(
                                   hintText: '00',
                                   hintStyle: AppTextStyles.kmwhite16600.copyWith(
-                                    color: AppColors.kwhite.withOpacity(0.5),
+                                    color: AppColors.kwhite.withValues(alpha: 0.5),
                                   ),
                                   border: InputBorder.none,
                                 ),
@@ -484,7 +484,7 @@ class _AlertsFrequencyScreenState extends State<AlertsFrequencyScreen> {
                   Text(
                     '${asset.name} • ${asset.category}',
                     style: AppTextStyles.kwhite14400.copyWith(
-                      color: AppColors.kwhite.withOpacity(0.7),
+                      color: AppColors.kwhite.withValues(alpha: 0.7),
                     ),
                   ),
                 ],
@@ -493,7 +493,7 @@ class _AlertsFrequencyScreenState extends State<AlertsFrequencyScreen> {
             if (isSelected)
               Icon(Icons.check_circle, color: AppColors.kprimary, size: 20.r)
             else
-              Icon(Icons.add_circle_outline, color: AppColors.kwhite.withOpacity(0.7), size: 20.r),
+              Icon(Icons.add_circle_outline, color: AppColors.kwhite.withValues(alpha: 0.7), size: 20.r),
           ],
         ),
       ),
@@ -534,7 +534,7 @@ class _AlertsFrequencyScreenState extends State<AlertsFrequencyScreen> {
                   Text(
                     '${asset.name} • ${asset.category}',
                     style: AppTextStyles.kblack12400.copyWith(
-                      color: AppColors.kwhite.withOpacity(0.7),
+                      color: AppColors.kwhite.withValues(alpha: 0.7),
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

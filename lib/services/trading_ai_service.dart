@@ -58,7 +58,7 @@ class TradingAIService {
         //print('Response body: ${response.body}');
       }
       return [];
-    } catch (e, stackTrace) {
+    } catch (e, _) {
       //print('Error fetching market summary: $e');
       //print('Stack trace: $stackTrace');
       return [];

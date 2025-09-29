@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import '../../core/constants/images.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_textfield.dart';
@@ -140,7 +138,7 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
 
                   final success = await _authService.updatePassword(newPassword: newPassword);
 
-                  if (success) {
+                  if (success && mounted) {
                     Navigator.pop(context);
                   }
                 },

@@ -210,25 +210,6 @@ class _OnBoardingState extends State<OnBoardingScreen> {
     );
   }
 
-  List<Widget> _buildPageIndicators() {
-    List<Widget> indicators = [];
-    for (int i = 0; i < _onboardingData.length; i++) {
-      indicators.add(
-        Container(
-          width: _currentPage == i ? 20.w : 8.w,
-          height: 8.h,
-          margin: EdgeInsets.symmetric(horizontal: 4.w),
-          decoration: BoxDecoration(
-            color: _currentPage == i
-                ? AppColors.kprimary
-                : AppColors.kgrey.withOpacity(0.3),
-            borderRadius: BorderRadius.circular(4.r),
-          ),
-        ),
-      );
-    }
-    return indicators;
-  }
 
   void _skipOnboarding() {
     // Navigate to BottomNavBar (main app)

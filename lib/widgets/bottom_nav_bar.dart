@@ -51,17 +51,17 @@ class _BottomNavBarState extends State<BottomNavBar> {
               color: AppColors.kscoffald,
               borderRadius: BorderRadius.circular(100.r),
               border: Border.all(
-                color: AppColors.kwhite.withOpacity(0.16),
+                color: AppColors.kwhite.withValues(alpha: 0.16),
                 width: 1,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
+                  color: Colors.black.withValues(alpha: 0.2),
                   blurRadius: 20,
                   offset: const Offset(0, 8),
                 ),
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withValues(alpha: 0.1),
                   blurRadius: 40,
                   offset: const Offset(0, 16),
                 ),
@@ -117,7 +117,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
                   width: isSelected ? 24.r : 22.r,
                   height: isSelected ? 24.r : 22.r,
                   colorFilter: ColorFilter.mode(
-                    isSelected ? AppColors.kprimary : AppColors.kwhite.withOpacity(0.6),
+                    isSelected ? AppColors.kprimary : AppColors.kwhite.withValues(alpha: 0.6),
                     BlendMode.srcIn,
                   ),
                 ),
@@ -173,20 +173,20 @@ class _FloatingPillNavBarState extends State<FloatingPillNavBar> {
             child: Container(
               height: 64.h,
               decoration: BoxDecoration(
-                color: AppColors.kscoffald.withOpacity(0.95),
+                color: AppColors.kscoffald.withValues(alpha: 0.95),
                 borderRadius: BorderRadius.circular(100.r),
                 border: Border.all(
-                  color: AppColors.kwhite.withOpacity(0.08),
+                  color: AppColors.kwhite.withValues(alpha: 0.08),
                   width: 1,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.25),
+                    color: Colors.black.withValues(alpha: 0.25),
                     blurRadius: 25,
                     offset: const Offset(0, 12),
                   ),
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.15),
+                    color: Colors.black.withValues(alpha: 0.15),
                     blurRadius: 50,
                     offset: const Offset(0, 25),
                   ),

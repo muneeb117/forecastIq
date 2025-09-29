@@ -15,7 +15,7 @@ class TermsAndCondition extends StatefulWidget {
 class _TermsAndConditionState extends State<TermsAndCondition> {
 
 
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -75,8 +75,8 @@ class _TermsAndConditionState extends State<TermsAndCondition> {
                             AppImages.search,
                             width: 18.w,
                             height: 18.h,
-                            color:
-                            AppColors.kwhite, // Ensure icon color matches text
+                            colorFilter: ColorFilter.mode(
+                            AppColors.kwhite, BlendMode.srcIn), // Ensure icon color matches text
                             fit: BoxFit.contain, // Ensure proper scaling
                           ),
                         ),

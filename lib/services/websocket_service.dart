@@ -336,7 +336,7 @@ class WebSocketService {
     }
   }
 
-  List<WebSocketChannel> _parallelChannels = [];
+  final List<WebSocketChannel> _parallelChannels = [];
 
   void _handleParallelWebSocketData(dynamic data, String expectedSymbol) {
     try {
@@ -458,7 +458,7 @@ class WebSocketService {
               latestChartData[chartUpdate.symbol] = chartUpdate;
               _chartController!.add(chartUpdate);
             }
-          } catch (e, stackTrace) {
+          } catch (e, _) {
             //print('❌ Error parsing chart WebSocket data for $symbol: $e');
             //print('StackTrace: $stackTrace');
           }

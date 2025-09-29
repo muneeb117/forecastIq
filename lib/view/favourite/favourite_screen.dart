@@ -241,8 +241,8 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
                         AppImages.search,
                         width: 18.w,
                         height: 18.h,
-                        color:
-                            AppColors.kwhite, // Ensure icon color matches text
+                        colorFilter: ColorFilter.mode(
+                            AppColors.kwhite, BlendMode.srcIn), // Ensure icon color matches text
                         fit: BoxFit.contain, // Ensure proper scaling
                       ),
                     ),
@@ -337,20 +337,20 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
             Icon(
               Icons.favorite_border,
               size: 48.w,
-              color: AppColors.kwhite.withOpacity(0.4),
+              color: AppColors.kwhite.withValues(alpha: 0.4),
             ),
             SizedBox(height: 16.h),
             Text(
               'No favorites yet',
               style: AppTextStyles.ktwhite16400.copyWith(
-                color: AppColors.kwhite.withOpacity(0.6),
+                color: AppColors.kwhite.withValues(alpha: 0.6),
               ),
             ),
             SizedBox(height: 8.h),
             Text(
               'Start adding items to your favorites!',
               style: AppTextStyles.ktwhite12500.copyWith(
-                color: AppColors.kwhite.withOpacity(0.4),
+                color: AppColors.kwhite.withValues(alpha: 0.4),
               ),
             ),
           ],
@@ -394,13 +394,13 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
             Icon(
               Icons.trending_up,
               size: 48.w,
-              color: AppColors.kwhite.withOpacity(0.4),
+              color: AppColors.kwhite.withValues(alpha: 0.4),
             ),
             SizedBox(height: 16.h),
             Text(
               'No stock favorites yet',
               style: AppTextStyles.ktwhite16400.copyWith(
-                color: AppColors.kwhite.withOpacity(0.6),
+                color: AppColors.kwhite.withValues(alpha: 0.6),
               ),
             ),
           ],
@@ -441,13 +441,13 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
             Icon(
               Icons.currency_bitcoin,
               size: 48.w,
-              color: AppColors.kwhite.withOpacity(0.4),
+              color: AppColors.kwhite.withValues(alpha: 0.4),
             ),
             SizedBox(height: 16.h),
             Text(
               'No crypto favorites yet',
               style: AppTextStyles.ktwhite16400.copyWith(
-                color: AppColors.kwhite.withOpacity(0.6),
+                color: AppColors.kwhite.withValues(alpha: 0.6),
               ),
             ),
           ],
@@ -488,13 +488,13 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
             Icon(
               Icons.public,
               size: 48.w,
-              color: AppColors.kwhite.withOpacity(0.4),
+              color: AppColors.kwhite.withValues(alpha: 0.4),
             ),
             SizedBox(height: 16.h),
             Text(
               'No macro favorites yet',
               style: AppTextStyles.ktwhite16400.copyWith(
-                color: AppColors.kwhite.withOpacity(0.6),
+                color: AppColors.kwhite.withValues(alpha: 0.6),
               ),
             ),
           ],
