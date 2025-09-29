@@ -44,8 +44,18 @@ class AppImages {
 
   static const String trendbg = 'assets/images/trendbg.png';
   static const String user = 'assets/images/user.png';
+
+  // Crypto Coin Images
   static const String btc = 'assets/images/btc.png';
   static const String eth = 'assets/images/eth.png';
+  static const String usdt = 'assets/images/usdt.png';
+  static const String xrp = 'assets/images/xrp.png';
+  static const String bnb = 'assets/images/bnb.png';
+  static const String sol = 'assets/images/sol.png';
+  static const String usdc = 'assets/images/usdc.png';
+  static const String doge = 'assets/images/doge.png';
+  static const String ada = 'assets/images/ada.png';
+  static const String trx = 'assets/images/trx.png';
   static const String rev = 'assets/images/rev.png';
 
 }

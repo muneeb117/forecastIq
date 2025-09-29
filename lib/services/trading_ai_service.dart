@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../models/market_data.dart';
+import '../models/models.dart';
 
 class TradingAIService {
-  static const String baseUrl = 'https://easygoing-beauty-production.up.railway.app';
+  static const String baseUrl = 'https://trading-production-85d8.up.railway.app';
 
   static const List<String> cryptoAssets = ['BTC', 'ETH', 'USDT', 'XRP', 'BNB', 'SOL', 'USDC', 'DOGE', 'ADA', 'TRX'];
   static const List<String> stockAssets = ['NVDA', 'MSFT', 'AAPL', 'GOOGL', 'AMZN', 'META', 'AVGO', 'TSLA', 'BRK-B', 'JPM'];

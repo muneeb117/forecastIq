@@ -3,14 +3,16 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:forcast/view/forcast_screen.dart';
-import 'package:forcast/view/trend_screen.dart';
+
 import '../core/constants/colors.dart';
-import '../core/constants/fonts.dart';
+
 import '../core/constants/images.dart';
-import '../view/home_screen.dart';
-import '../view/main_favorites_screen.dart';
-import '../view/setting_screen.dart';
+import '../view/favourite/favourite_screen.dart';
+import '../view/forcast/forcast_screen.dart';
+import '../view/home/home_screen.dart';
+import '../view/settings/setting_screen.dart';
+import '../view/trend/trend_screen.dart';
+
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({super.key});
@@ -23,10 +25,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
   int _currentIndex = 0;
 
   final List<Widget> _screens = [
-    const HomeScreen(),
+     HomeScreen(),
     const ForcastScreen(),
     const TrendScreen(),
-    const MainFavouriteScreen(),
+    const FavouriteScreen(showBackButton: false),
     const SettingScreen(),
   ];
 
@@ -151,10 +153,10 @@ class _FloatingPillNavBarState extends State<FloatingPillNavBar> {
   int _currentIndex = 0;
 
   final List<Widget> _screens = [
-    const HomeScreen(),
+     HomeScreen(),
     const ForcastScreen(),
     const TrendScreen(),
-    const MainFavouriteScreen(),
+    const FavouriteScreen(showBackButton: false),
     const SettingScreen(),
   ];
 

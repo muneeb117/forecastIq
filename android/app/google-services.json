@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "768547120295",
+    "project_id": "fleet-reserve-473522-p0",
+    "storage_bucket": "fleet-reserve-473522-p0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:768547120295:android:com.example.forcast",
+        "android_client_info": {
+          "package_name": "com.example.forcast"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "768547120295-cacuhetuo1bjqi2h1hk9q1geh9ng11qi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.forcast",
+            "certificate_hash": []
+          }
+        },
+        {
+          "client_id": "768547120295-s5tjag3ccpqjpugf3rdng8sfh6j3pr6q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDummy_Key_Replace_With_Your_API_Key"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "768547120295-s5tjag3ccpqjpugf3rdng8sfh6j3pr6q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

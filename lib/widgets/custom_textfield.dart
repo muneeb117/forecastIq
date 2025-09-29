@@ -6,7 +6,6 @@ import '../core/constants/colors.dart';
 import '../core/constants/fonts.dart';
 import '../core/constants/images.dart';
 
-
 class CustomTextFormField extends StatefulWidget {
   final String hintName;
   final String titleofTestFormField;
@@ -59,9 +58,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       children: [
         Text(
           widget.titleofTestFormField,
-          style: AppTextStyles.kblack14500.copyWith(
-              color: AppColors.kwhite
-          ),
+          style: AppTextStyles.kblack14500.copyWith(color: AppColors.kwhite),
         ),
         8.verticalSpace,
         Stack(
@@ -73,7 +70,9 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                 borderRadius: BorderRadius.circular(8.r),
                 color: AppColors.ksecondary,
                 border: Border.all(
-                  color: _isFocused ? AppColors.kprimary : AppColors.kwhite.withValues(alpha: 0.2),
+                  color: _isFocused
+                      ? AppColors.kprimary
+                      : AppColors.kwhite.withValues(alpha: 0.2),
                   width: 1.w,
                 ),
               ),
@@ -84,79 +83,73 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                   });
                 },
                 child: TextFormField(
-                maxLines: widget.maxLines,
-                controller: widget.controller,
-                focusNode: widget.focusNode, // Pass the focusNode
-                obscureText: _obscureText && widget.isPassword,
-                validator: (value) {
-                  final error = widget.validator?.call(value);
-                  setState(() {
-                    _errorText = error;
-                  });
-                  return null; // Always return null to prevent built-in error display
-                },
-                style: AppTextStyles.kblack14500.copyWith(
-    color: AppColors.kwhite
-    ),
-                keyboardType: phoneNumberEnabled
-                    ? TextInputType.phone
-                    : TextInputType.emailAddress,
-                onFieldSubmitted:
-                widget.onFieldSubmitted, // Pass onFieldSubmitted
-                onChanged: (value) {
-                  widget.onChanged?.call(value);
-                  // Trigger validation on text change
-                  if (widget.validator != null) {
-                    final error = widget.validator!(value);
+                  maxLines: widget.maxLines,
+                  controller: widget.controller,
+                  focusNode: widget.focusNode, // Pass the focusNode
+                  obscureText: _obscureText && widget.isPassword,
+                  validator: (value) {
+                    final error = widget.validator?.call(value);
                     setState(() {
                       _errorText = error;
                     });
-                  }
-                },
-                enabled: widget.isEditable, // Control editability
-                decoration: InputDecoration(
-                  hintText: widget.hintName,
-                  hintStyle: AppTextStyles.kblack14500.copyWith(
-                    color: AppColors.kwhite
+                    return null; // Always return null to prevent built-in error display
+                  },
+                  style: AppTextStyles.kblack14500.copyWith(
+                    color: AppColors.kwhite,
                   ),
+                  keyboardType: phoneNumberEnabled
+                      ? TextInputType.phone
+                      : TextInputType.emailAddress,
+                  onFieldSubmitted:
+                      widget.onFieldSubmitted, // Pass onFieldSubmitted
+                  onChanged: (value) {
+                    widget.onChanged?.call(value);
+                    // Trigger validation on text change
+                    if (widget.validator != null) {
+                      final error = widget.validator!(value);
+                      setState(() {
+                        _errorText = error;
+                      });
+                    }
+                  },
+                  enabled: widget.isEditable, // Control editability
+                  decoration: InputDecoration(
+                    hintText: widget.hintName,
+                    hintStyle: AppTextStyles.kblack14500.copyWith(
+                      color: AppColors.kwhite,
+                    ),
 
-                  prefixIcon: widget.prefixIcon,
-                  suffixIcon: widget.isPassword 
-                      ? null 
-                      : widget.suffixIcon,
-                  filled: true,
-                  fillColor: Colors.transparent,
-                  errorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.r),
-                    borderSide: BorderSide.none,
-                  ),
-                  focusedErrorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.r),
-                    borderSide: BorderSide.none,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.r),
-                    borderSide: BorderSide.none,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.r),
-                    borderSide: BorderSide.none,
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.r),
-                    borderSide: BorderSide.none,
-                  ),
-                  errorStyle: TextStyle(
-                    height: 0,
-                    color: Colors.transparent,
-                  ),
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 20.w,
-
-                    vertical: 16.h,
+                    prefixIcon: widget.prefixIcon,
+                    suffixIcon: widget.isPassword ? null : widget.suffixIcon,
+                    filled: true,
+                    fillColor: Colors.transparent,
+                    errorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.r),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.r),
+                      borderSide: BorderSide.none,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.r),
+                      borderSide: BorderSide.none,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.r),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.r),
+                      borderSide: BorderSide.none,
+                    ),
+                    errorStyle: TextStyle(height: 0, color: Colors.transparent),
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 20.w,
+                      vertical: 0.h,
+                    ),
                   ),
                 ),
-              ),
               ),
             ),
             if (widget.isPassword)

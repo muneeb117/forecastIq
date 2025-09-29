@@ -2,162 +2,14 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/status.dart' as status;
-import '../models/market_data.dart';
+import '../models/chart_update.dart';
 
-class RealTimeUpdate {
-  final String type;
-  final String symbol;
-  final double? currentPrice;
-  final double? change24h;
-  final int? confidence;
-  final String? forecastDirection;
-  final String? predictedRange;
-  final DateTime timestamp;
-  final double? volume;
+import '../models/real_time_update.dart';
 
-  RealTimeUpdate({
-    required this.type,
-    required this.symbol,
-    this.currentPrice,
-    this.change24h,
-    this.confidence,
-    this.forecastDirection,
-    this.predictedRange,
-    required this.timestamp,
-    this.volume,
-  });
-
-  factory RealTimeUpdate.fromJson(Map<String, dynamic> json) {
-    return RealTimeUpdate(
-      type: json['type'] ?? 'price_update',
-      symbol: json['symbol'] ?? '',
-      currentPrice: _parseDouble(json['current_price'] ?? json['price']),
-      change24h: _parseDouble(json['change_24h']),
-      confidence: _parseInt(json['confidence']),
-      forecastDirection: json['forecast_direction']?.toString(),
-      predictedRange: json['predicted_range']?.toString(),
-      timestamp: _parseTimestamp(json),
-      volume: _parseDouble(json['volume']),
-    );
-  }
-
-  static double? _parseDouble(dynamic value) {
-    if (value == null) return null;
-    if (value is double) return value;
-    if (value is int) return value.toDouble();
-    if (value is String) return double.tryParse(value);
-    return null;
-  }
-
-  static int? _parseInt(dynamic value) {
-    if (value == null) return null;
-    if (value is int) return value;
-    if (value is double) return value.round();
-    if (value is String) return int.tryParse(value);
-    return null;
-  }
-
-  static DateTime _parseTimestamp(Map<String, dynamic> json) {
-    if (json['last_updated'] != null) {
-      final parsed = DateTime.tryParse(json['last_updated']);
-      if (parsed != null) return parsed;
-    }
-
-    if (json['timestamp'] != null) {
-      final timeStr = json['timestamp'].toString();
-      if (timeStr.contains(':') && timeStr.length <= 5) {
-        final now = DateTime.now();
-        final parts = timeStr.split(':');
-        if (parts.length == 2) {
-          final hour = int.tryParse(parts[0]) ?? now.hour;
-          final minute = int.tryParse(parts[1]) ?? now.minute;
-          return DateTime(now.year, now.month, now.day, hour, minute);
-        }
-      }
-      final parsed = DateTime.tryParse(timeStr);
-      if (parsed != null) return parsed;
-    }
-
-    return DateTime.now();
-  }
-}
-
-class TrendsUpdate {
-  final String type;
-  final String symbol;
-  final double accuracy;
-  final TrendsChart chart;
-  final List<TrendsHistory> history;
-  final DateTime lastUpdated;
-
-  TrendsUpdate({
-    required this.type,
-    required this.symbol,
-    required this.accuracy,
-    required this.chart,
-    required this.history,
-    required this.lastUpdated,
-  });
-
-  factory TrendsUpdate.fromJson(Map<String, dynamic> json) {
-    return TrendsUpdate(
-      type: json['type'] ?? 'trends_update',
-      symbol: json['symbol'] ?? '',
-      accuracy: (json['accuracy'] ?? 0.0).toDouble(),
-      chart: TrendsChart.fromJson(json['chart'] ?? {}),
-      history: (json['history'] as List? ?? [])
-          .map((item) => TrendsHistory.fromJson(item))
-          .toList(),
-      lastUpdated: DateTime.tryParse(json['last_updated'] ?? '') ?? DateTime.now(),
-    );
-  }
-}
-
-class TrendsChart {
-  final List<double> forecast;
-  final List<double> actual;
-  final List<String> timestamps;
-
-  TrendsChart({
-    required this.forecast,
-    required this.actual,
-    required this.timestamps,
-  });
-
-  factory TrendsChart.fromJson(Map<String, dynamic> json) {
-    return TrendsChart(
-      forecast: (json['forecast'] as List? ?? []).map((e) => (e as num).toDouble()).toList(),
-      actual: (json['actual'] as List? ?? []).map((e) => (e as num).toDouble()).toList(),
-      timestamps: (json['timestamps'] as List? ?? []).map((e) => e.toString()).toList(),
-    );
-  }
-}
-
-class TrendsHistory {
-  final String date;
-  final String forecast;
-  final String actual;
-  final String result;
-
-  TrendsHistory({
-    required this.date,
-    required this.forecast,
-    required this.actual,
-    required this.result,
-  });
-
-  factory TrendsHistory.fromJson(Map<String, dynamic> json) {
-    return TrendsHistory(
-      date: json['date'] ?? '',
-      forecast: json['forecast'] ?? '',
-      actual: json['actual'] ?? '',
-      result: json['result'] ?? '',
-    );
-  }
-}
+import '../models/trends_update.dart';
 
 class WebSocketService {
-  static const String baseWsUrl = 'wss://easygoing-beauty-production.up.railway.app/ws';
+  static const String baseWsUrl = 'wss://trading-production-85d8.up.railway.app/ws';
 
   WebSocketChannel? _channel;
   StreamController<Map<String, dynamic>>? _controller;
@@ -203,7 +55,6 @@ class WebSocketService {
               final realTimeUpdate = RealTimeUpdate.fromJson(jsonData);
               latestUpdates[realTimeUpdate.symbol] = realTimeUpdate;
               _realTimeController!.add(realTimeUpdate);
-              print('📊 Update received: ${realTimeUpdate.symbol} - \$${realTimeUpdate.currentPrice?.toStringAsFixed(2)} - ${realTimeUpdate.confidence}%');
             }
           } catch (e) {
             print('Error parsing WebSocket data for $symbol: $e');
@@ -324,7 +175,6 @@ class WebSocketService {
               final realTimeUpdate = RealTimeUpdate.fromJson(jsonData);
               latestUpdates[realTimeUpdate.symbol] = realTimeUpdate;
               _realTimeController!.add(realTimeUpdate);
-              print('📊 Market update received: ${realTimeUpdate.symbol} - \$${realTimeUpdate.currentPrice?.toStringAsFixed(2)} - ${realTimeUpdate.confidence}%');
             }
           } catch (e) {
             print('Error parsing WebSocket data: $e');
@@ -529,7 +379,6 @@ class WebSocketService {
           latestUpdates[symbol] = realTimeUpdate;
           if (_realTimeController != null && !_realTimeController!.isClosed) {
             _realTimeController!.add(realTimeUpdate);
-            print('📊 [$symbol] Price: \$${realTimeUpdate.currentPrice?.toStringAsFixed(2)} | Confidence: ${realTimeUpdate.confidence?.toString() ?? 'N/A'}%');
           }
         } catch (parseError) {
           print('❌ Error creating RealTimeUpdate for $symbol: $parseError');
@@ -592,48 +441,55 @@ class WebSocketService {
       _chartStream = _chartController!.stream;
       _isConnected = true;
 
+
       print('📈 Connected to chart WebSocket for $symbol ($timeframe)');
 
       _channel!.stream.listen(
-        (data) {
+            (data) {
+          print('📡 Received WebSocket data: $data');
           try {
-            final jsonData = json.decode(data);
+            final jsonData = json.decode(data is String ? data : data.toString());
             _controller!.add(jsonData);
+
 
             if (jsonData['type'] == 'chart_update') {
               final chartUpdate = ChartUpdate.fromJson(jsonData);
+              print('📊 Parsed ChartUpdate: symbol=${chartUpdate.symbol}, timeframe=${chartUpdate.timeframe}, pastPoints=${chartUpdate.chartData.pastDataPoints}, futurePoints=${chartUpdate.chartData.futureDataPoints}');
               latestChartData[chartUpdate.symbol] = chartUpdate;
               _chartController!.add(chartUpdate);
-              print('📊 Chart update: ${chartUpdate.symbol} - ${chartUpdate.chartData?.pastDataPoints ?? 0} past + ${chartUpdate.chartData?.futureDataPoints ?? 0} future points - Update #${chartUpdate.updateCount}');
             }
-          } catch (e) {
-            print('Error parsing chart WebSocket data for $symbol: $e');
+          } catch (e, stackTrace) {
+            print('❌ Error parsing chart WebSocket data for $symbol: $e');
+            print('StackTrace: $stackTrace');
           }
         },
         onError: (error) {
-          print('Chart WebSocket error for $symbol: $error');
+          print('❌ Chart WebSocket error for $symbol: $error');
           _isConnected = false;
-          Future.delayed(Duration(seconds: 5), () {
-            connectToAssetChart(symbol, timeframe: timeframe);
-          });
+          _scheduleReconnect(symbol, timeframe);
         },
-
         onDone: () {
-          print('Chart WebSocket connection closed for $symbol');
+          print('🔚 Chart WebSocket connection closed for $symbol');
           _isConnected = false;
-          Future.delayed(Duration(seconds: 5), () {
-            connectToAssetChart(symbol, timeframe: timeframe);
-          });
+          _scheduleReconnect(symbol, timeframe);
         },
       );
     } catch (e) {
-      print('Error connecting to chart WebSocket for $symbol: $e');
+      print('❌ Error connecting to chart WebSocket for $symbol: $e');
       _isConnected = false;
-      Future.delayed(Duration(seconds: 5), () {
-        connectToAssetChart(symbol, timeframe: timeframe);
-      });
+      _scheduleReconnect(symbol, timeframe);
     }
   }
+
+  void _scheduleReconnect(String symbol, String timeframe) {
+    Future.delayed(Duration(seconds: 5), () {
+      if (!_isConnected) {
+        print('🔄 Attempting to reconnect WebSocket for $symbol');
+        connectToAssetChart(symbol, timeframe: timeframe);
+      }
+    });
+  }
+
 
   Future<void> _disconnect() async {
     if (_channel != null) {
@@ -674,6 +530,7 @@ class WebSocketService {
     disconnect();
   }
 }
+
 
 class WebSocketManager {
   static final WebSocketManager _instance = WebSocketManager._internal();

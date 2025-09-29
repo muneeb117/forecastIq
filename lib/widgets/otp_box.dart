@@ -25,8 +25,8 @@ class _OTPBoxState extends State<OTPBox> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 76.w,
-      height: 55.h,
+      width: 50.w,
+      height: 50.h,
       decoration: BoxDecoration(
         color: AppColors.ksecondary,
         borderRadius: BorderRadius.circular(8.r),
