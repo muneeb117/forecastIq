@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import '../controllers/app_controller.dart';
 import '../controllers/forecast_controller.dart';
-import '../controllers/home_controller.dart';
+
 import '../controllers/favorites_controller.dart';
 import '../controllers/profile_controller.dart';
 import '../controllers/controller_manager.dart';

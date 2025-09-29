@@ -25,9 +25,9 @@ class ControllerManager extends GetxController {
         try {
           Get.delete<CoinDetailController>(tag: symbol);
           _activeCoinControllers.remove(symbol);
-          print('🗑️ Cleaned up controller for $symbol');
+
         } catch (e) {
-          print('❌ Failed to cleanup controller for $symbol: $e');
+
         }
       }
     }
@@ -38,9 +38,9 @@ class ControllerManager extends GetxController {
     try {
       Get.delete<CoinDetailController>(tag: symbol);
       _activeCoinControllers.remove(symbol);
-      print('🗑️ Manually cleaned up controller for $symbol');
+
     } catch (e) {
-      print('❌ Failed to manually cleanup controller for $symbol: $e');
+
     }
   }
 

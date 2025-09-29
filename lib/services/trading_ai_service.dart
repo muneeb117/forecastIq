@@ -36,7 +36,7 @@ class TradingAIService {
             if (item is Map<String, dynamic>) {
               return MarketSummary.fromJson(item);
             } else {
-              print('Warning: Expected Map but got ${item.runtimeType}');
+              //print('Warning: Expected Map but got ${item.runtimeType}');
               return null;
             }
           }).where((item) => item != null).cast<MarketSummary>().toList();
@@ -45,22 +45,22 @@ class TradingAIService {
             if (item is Map<String, dynamic>) {
               return MarketSummary.fromJson(item);
             } else {
-              print('Warning: Expected Map but got ${item.runtimeType}');
+              //print('Warning: Expected Map but got ${item.runtimeType}');
               return null;
             }
           }).where((item) => item != null).cast<MarketSummary>().toList();
         } else {
-          print('Unexpected response format: ${responseData.runtimeType}');
+          //print('Unexpected response format: ${responseData.runtimeType}');
           return [];
         }
       } else {
-        print('HTTP Error: ${response.statusCode}');
-        print('Response body: ${response.body}');
+        //print('HTTP Error: ${response.statusCode}');
+        //print('Response body: ${response.body}');
       }
       return [];
     } catch (e, stackTrace) {
-      print('Error fetching market summary: $e');
-      print('Stack trace: $stackTrace');
+      //print('Error fetching market summary: $e');
+      //print('Stack trace: $stackTrace');
       return [];
     }
   }
@@ -77,7 +77,7 @@ class TradingAIService {
       }
       return null;
     } catch (e) {
-      print('Error fetching asset forecast: $e');
+      //print('Error fetching asset forecast: $e');
       return null;
     }
   }
@@ -94,7 +94,7 @@ class TradingAIService {
       }
       return null;
     } catch (e) {
-      print('Error fetching asset trends: $e');
+      //print('Error fetching asset trends: $e');
       return null;
     }
   }
@@ -111,7 +111,7 @@ class TradingAIService {
       }
       return [];
     } catch (e) {
-      print('Error searching assets: $e');
+      //print('Error searching assets: $e');
       return [];
     }
   }

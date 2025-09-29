@@ -103,9 +103,9 @@ class _AlertsFrequencyScreenState extends State<AlertsFrequencyScreen> {
         });
       }
 
-      print('✅ Loaded settings: $savedFrequency alerts, $_selectedFrequency frequency');
+      //print('✅ Loaded settings: $savedFrequency alerts, $_selectedFrequency frequency');
     } catch (e) {
-      print('Error loading saved settings: $e');
+      //print('Error loading saved settings: $e');
     }
   }
 
@@ -116,7 +116,7 @@ class _AlertsFrequencyScreenState extends State<AlertsFrequencyScreen> {
       await prefs.setInt(_alertFrequencyKey, frequency);
       await prefs.setString(_selectedFrequencyKey, frequencyType);
     } catch (e) {
-      print('Error saving settings: $e');
+      //print('Error saving settings: $e');
     }
   }
 
@@ -649,7 +649,7 @@ class _AlertsFrequencyScreenState extends State<AlertsFrequencyScreen> {
       );
     }
 
-    print('✅ Scheduled $alertCount daily alerts for ${asset.symbol} - Every ${(intervalMinutes/60).toStringAsFixed(1)} hours');
+    //print('✅ Scheduled $alertCount daily alerts for ${asset.symbol} - Every ${(intervalMinutes/60).toStringAsFixed(1)} hours');
   }
 
   void _scheduleWeeklyAlerts(AssetData asset, int alertCount) {
@@ -680,7 +680,7 @@ class _AlertsFrequencyScreenState extends State<AlertsFrequencyScreen> {
       );
     }
 
-    print('✅ Scheduled $alertCount weekly alerts for ${asset.symbol} - Every ${(intervalMinutes/60).toStringAsFixed(1)} hours over 7 days');
+    //print('✅ Scheduled $alertCount weekly alerts for ${asset.symbol} - Every ${(intervalMinutes/60).toStringAsFixed(1)} hours over 7 days');
   }
 
   void _scheduleRealTimeAlerts(AssetData asset, int alertCount) {
@@ -710,7 +710,7 @@ class _AlertsFrequencyScreenState extends State<AlertsFrequencyScreen> {
       );
     }
 
-    print('✅ Scheduled $alertCount real-time alerts for ${asset.symbol} - Every ${(intervalMinutes/60).toStringAsFixed(1)} hours');
+    //print('✅ Scheduled $alertCount real-time alerts for ${asset.symbol} - Every ${(intervalMinutes/60).toStringAsFixed(1)} hours');
   }
 
   void _setupAlertForAsset(AssetData asset) {

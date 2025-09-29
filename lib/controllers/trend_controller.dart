@@ -61,9 +61,9 @@ class TrendController extends GetxController {
 
       availableCoins.value = assets;
 
-      print('📊 Loaded ${assets.length} available assets for trends');
+
     } catch (e) {
-      print('❌ Error loading available assets: $e');
+
 
       // Fallback to a minimal set of supported assets
       availableCoins.value = [
@@ -159,7 +159,7 @@ class TrendController extends GetxController {
 
       final url = 'https://trading-production-85d8.up.railway.app/api/asset/$symbol/trends?timeframe=$timeframe';
 
-      print('🔄 Loading trend data: $url');
+
 
 
       final response = await http.get(
@@ -170,14 +170,14 @@ class TrendController extends GetxController {
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
         trendData.value = TrendData.fromJson(jsonData);
-        print('✅ Trend data loaded successfully for $symbol $timeframe');
+        //print('✅ Trend data loaded successfully for $symbol $timeframe');
       } else {
         throw Exception('API Error: ${response.statusCode}');
       }
     } catch (e) {
       hasError.value = true;
       errorMessage.value = e.toString();
-      print('❌ Error loading trend data: $e');
+      //print('❌ Error loading trend data: $e');
 
       MessageHelper.showError(
         'Failed to load trend data: ${e.toString()}',

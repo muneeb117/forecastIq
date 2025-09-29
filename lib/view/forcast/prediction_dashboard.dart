@@ -376,7 +376,7 @@ class _AssetDetailScreenState extends State<AssetDetailScreen> {
             forecast = newForecast;
           });
         } catch (e) {
-          print('Error parsing real-time forecast: $e');
+          //print('Error parsing real-time forecast: $e');
         }
       }
     });

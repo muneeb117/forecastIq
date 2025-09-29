@@ -135,9 +135,9 @@ class _CoinDetailScreenState extends State<CoinDetailScreen> {
     final selectedTimeframe = _timeFrames[_selectedTimeFrame];
     final apiTimeframe = _getApiTimeframe(selectedTimeframe);
 
-    print('🔗 Connecting to WebSocket via WebSocketService:');
-    print('   Selected: $selectedTimeframe -> API: $apiTimeframe');
-    print('   Symbol: ${widget.symbol}');
+    //print('🔗 Connecting to WebSocket via WebSocketService:');
+    //print('   Selected: $selectedTimeframe -> API: $apiTimeframe');
+    //print('   Symbol: ${widget.symbol}');
 
     // Cancel existing subscription
     _chartSubscription?.cancel();
@@ -151,7 +151,7 @@ class _CoinDetailScreenState extends State<CoinDetailScreen> {
           _hasError = true;
           _errorMessage = 'Connection timeout. Please check your internet connection.';
         });
-        print('⏰ WebSocket connection timeout');
+        //print('⏰ WebSocket connection timeout');
       }
     });
 
@@ -162,12 +162,12 @@ class _CoinDetailScreenState extends State<CoinDetailScreen> {
           _chartSubscription = _webSocketService.chartStream!.listen(
             (chartUpdate) {
               _timeoutTimer?.cancel();
-              print('📡 Received chart update via WebSocketService');
+              //print('📡 Received chart update via WebSocketService');
               _handleChartUpdate(chartUpdate);
             },
             onError: (error) {
               _timeoutTimer?.cancel();
-              print('❌ WebSocket error: $error');
+              //print('❌ WebSocket error: $error');
               if (mounted) {
                 setState(() {
                   _isLoading = false;
@@ -178,7 +178,7 @@ class _CoinDetailScreenState extends State<CoinDetailScreen> {
             },
             onDone: () {
               _timeoutTimer?.cancel();
-              print('🔚 WebSocket connection closed');
+              //print('🔚 WebSocket connection closed');
               if (mounted && _isLoading) {
                 setState(() {
                   _isLoading = false;
@@ -191,7 +191,7 @@ class _CoinDetailScreenState extends State<CoinDetailScreen> {
         }
       }).catchError((e) {
         _timeoutTimer?.cancel();
-        print('❌ Failed to connect: $e');
+        //print('❌ Failed to connect: $e');
         if (mounted) {
           setState(() {
             _isLoading = false;
@@ -202,7 +202,7 @@ class _CoinDetailScreenState extends State<CoinDetailScreen> {
       });
     } catch (e) {
       _timeoutTimer?.cancel();
-      print('❌ Failed to connect: $e');
+      //print('❌ Failed to connect: $e');
       setState(() {
         _isLoading = false;
         _hasError = true;
@@ -217,10 +217,10 @@ class _CoinDetailScreenState extends State<CoinDetailScreen> {
     try {
       final currentTimeframe = _timeFrames[_selectedTimeFrame];
 
-      print('✅ Successfully received ChartUpdate for ${chartUpdate.symbol}');
-      print('📈 Timeframe: $currentTimeframe (Expected vs Received: ${chartUpdate.timeframe})');
-      print('📈 Past prices count: ${chartUpdate.chartData.pastPrices.length}');
-      print('🔮 Future prices count: ${chartUpdate.chartData.futurePrices.length}');
+      //print('✅ Successfully received ChartUpdate for ${chartUpdate.symbol}');
+      //print('📈 Timeframe: $currentTimeframe (Expected vs Received: ${chartUpdate.timeframe})');
+      //print('📈 Past prices count: ${chartUpdate.chartData.pastPrices.length}');
+      //print('🔮 Future prices count: ${chartUpdate.chartData.futurePrices.length}');
 
       // Validate data points based on timeframe
       _validateTimeframeData(currentTimeframe, chartUpdate.chartData);
@@ -255,9 +255,9 @@ class _CoinDetailScreenState extends State<CoinDetailScreen> {
           }
         });
 
-        print('🎉 Chart updated successfully!');
+        //print('🎉 Chart updated successfully!');
       } else {
-        print('⚠️ Received chart update but no price data');
+        //print('⚠️ Received chart update but no price data');
         setState(() {
           _isLoading = false;
           _hasError = true;
@@ -265,8 +265,8 @@ class _CoinDetailScreenState extends State<CoinDetailScreen> {
         });
       }
     } catch (e, stackTrace) {
-      print('❌ Error handling chart update: $e');
-      print('Stack trace: $stackTrace');
+      //print('❌ Error handling chart update: $e');
+      //print('Stack trace: $stackTrace');
 
       setState(() {
         _isLoading = false;
@@ -290,7 +290,7 @@ class _CoinDetailScreenState extends State<CoinDetailScreen> {
   }
 
   void _validateTimeframeData(String timeframe, ChartData chartData) {
-    print('🔍 Validating data for timeframe: $timeframe');
+    //print('🔍 Validating data for timeframe: $timeframe');
 
     // Expected data points for each timeframe
     Map<String, Map<String, int>> expectedDataPoints = {
@@ -308,42 +308,42 @@ class _CoinDetailScreenState extends State<CoinDetailScreen> {
       final expectedPast = expected['past']!;
       final expectedFuture = expected['future']!;
 
-      print('📊 Expected: Past=${expectedPast}, Future=${expectedFuture}');
-      print('📊 Actual: Past=${actualPast}, Future=${actualFuture}');
+      //print('📊 Expected: Past=${expectedPast}, Future=${expectedFuture}');
+      //print('📊 Actual: Past=${actualPast}, Future=${actualFuture}');
 
       if (actualPast != expectedPast) {
-        print('⚠️ Past data mismatch! Expected $expectedPast but got $actualPast');
+        //print('⚠️ Past data mismatch! Expected $expectedPast but got $actualPast');
       }
       if (actualFuture != expectedFuture) {
-        print('⚠️ Future data mismatch! Expected $expectedFuture but got $actualFuture');
+        //print('⚠️ Future data mismatch! Expected $expectedFuture but got $actualFuture');
       }
 
       // Log data granularity info based on timeframe
       switch (timeframe) {
         case '1h':
-          print('💡 1h Timeframe should show:');
-          print('   - Past: Last 24 hours (1 point per hour)');
-          print('   - Future: Next 12 hours (1 point per hour)');
+          //print('💡 1h Timeframe should show:');
+          //print('   - Past: Last 24 hours (1 point per hour)');
+          //print('   - Future: Next 12 hours (1 point per hour)');
           break;
         case '4h':
-          print('💡 4h Timeframe should show:');
-          print('   - Past: Last 96 hours in 4h intervals (1 point per 4h)');
-          print('   - Future: Next 48 hours in 4h intervals (1 point per 4h)');
+          //print('💡 4h Timeframe should show:');
+          //print('   - Past: Last 96 hours in 4h intervals (1 point per 4h)');
+          //print('   - Future: Next 48 hours in 4h intervals (1 point per 4h)');
           break;
         case '1d':
-          print('💡 1d Timeframe should show:');
-          print('   - Past: Last 30 days (1 point per day)');
-          print('   - Future: Next 15 days (1 point per day)');
+          //print('💡 1d Timeframe should show:');
+          //print('   - Past: Last 30 days (1 point per day)');
+          //print('   - Future: Next 15 days (1 point per day)');
           break;
         case '7d':
-          print('💡 7d Timeframe should show:');
-          print('   - Past: Last 12 weeks (1 point per week)');
-          print('   - Future: Next 6 weeks (1 point per week)');
+          //print('💡 7d Timeframe should show:');
+          //print('   - Past: Last 12 weeks (1 point per week)');
+          //print('   - Future: Next 6 weeks (1 point per week)');
           break;
         case '1M':
-          print('💡 1M Timeframe should show:');
-          print('   - Past: Last 12 months (1 point per month)');
-          print('   - Future: Next 6 months (1 point per month)');
+          //print('💡 1M Timeframe should show:');
+          //print('   - Past: Last 12 months (1 point per month)');
+          //print('   - Future: Next 6 months (1 point per month)');
           break;
       }
     }
@@ -419,7 +419,7 @@ class _CoinDetailScreenState extends State<CoinDetailScreen> {
         throw Exception('Failed to capture chart');
       }
     } catch (e) {
-      print('Error saving chart: $e');
+      //print('Error saving chart: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Failed to save chart: ${e.toString()}'),
@@ -1034,7 +1034,7 @@ class ChartPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    print('Painting chart: pastPrices=${chartData.pastPrices.length}, futurePrices=${chartData.futurePrices.length}');
+    //print('Painting chart: pastPrices=${chartData.pastPrices.length}, futurePrices=${chartData.futurePrices.length}');
 
     // Past data (grey line)
     final pastPaint = Paint()
@@ -1058,7 +1058,7 @@ class ChartPainter extends CustomPainter {
 
     // Avoid division by zero
     if (priceRange == 0) {
-      print('Price range is zero, skipping chart rendering');
+      //print('Price range is zero, skipping chart rendering');
       return;
     }
 

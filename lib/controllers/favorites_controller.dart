@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import '../core/helpers/message_helper.dart';
 import '../services/favorites_service.dart';
 
-import '../core/constants/images.dart';
+
 
 class FavoritesController extends GetxController {
   // Service

@@ -98,7 +98,7 @@ class AuthService extends GetxController {
   Future<AuthResponse?> signInWithGoogle() async {
     try {
       isLoading.value = true;
-      print('🔵 Starting Google Sign-In process...');
+      //print('🔵 Starting Google Sign-In process...');
 
       // Try different client ID configurations
       final List<String> clientIds = [
@@ -112,7 +112,7 @@ class AuthService extends GetxController {
       // Try each client ID until one works
       for (String clientId in clientIds) {
         try {
-          print('🔵 Trying client ID: ${clientId.substring(0, 20)}...');
+          //print('🔵 Trying client ID: ${clientId.substring(0, 20)}...');
 
           final GoogleSignIn googleSignIn = GoogleSignIn(
             serverClientId: clientId,
@@ -123,18 +123,18 @@ class AuthService extends GetxController {
 
           googleUser = await googleSignIn.signIn();
           if (googleUser != null) {
-            print('✅ Google Sign-In successful with client ID: ${clientId.substring(0, 20)}...');
+            //print('✅ Google Sign-In successful with client ID: ${clientId.substring(0, 20)}...');
             workingGoogleSignIn = googleSignIn;
             break;
           }
         } catch (e) {
-          print('❌ Failed with client ID ${clientId.substring(0, 20)}...: $e');
+          //print('❌ Failed with client ID ${clientId.substring(0, 20)}...: $e');
           continue;
         }
       }
 
       if (googleUser == null) {
-        print('❌ No Google user found after trying all client IDs');
+        //print('❌ No Google user found after trying all client IDs');
         MessageHelper.showError(
           'Google Sign-in was cancelled or failed',
         );
@@ -142,13 +142,13 @@ class AuthService extends GetxController {
         return null;
       }
 
-      print('🔵 Getting Google authentication tokens...');
+      //print('🔵 Getting Google authentication tokens...');
       final googleAuth = await googleUser.authentication;
       final accessToken = googleAuth.accessToken;
       final idToken = googleAuth.idToken;
 
-      print('🔵 Access Token: ${accessToken != null ? "✅ Found" : "❌ Missing"}');
-      print('🔵 ID Token: ${idToken != null ? "✅ Found" : "❌ Missing"}');
+      //print('🔵 Access Token: ${accessToken != null ? "✅ Found" : "❌ Missing"}');
+      //print('🔵 ID Token: ${idToken != null ? "✅ Found" : "❌ Missing"}');
 
       if (accessToken == null) {
         throw 'No Access Token found.';
@@ -157,7 +157,7 @@ class AuthService extends GetxController {
         throw 'No ID Token found.';
       }
 
-      print('🔵 Attempting Supabase authentication...');
+      //print('🔵 Attempting Supabase authentication...');
       final response = await _supabase.auth.signInWithIdToken(
         provider: OAuthProvider.google,
         idToken: idToken,
@@ -165,24 +165,24 @@ class AuthService extends GetxController {
       );
 
       if (response.user != null) {
-        print('✅ Supabase authentication successful!');
+        //print('✅ Supabase authentication successful!');
         MessageHelper.showSuccess(
           'Signed in with Google successfully!',
         );
       } else {
-        print('❌ Supabase authentication failed - no user returned');
+        //print('❌ Supabase authentication failed - no user returned');
       }
 
       return response;
     } on AuthException catch (e) {
-      print('❌ AuthException: ${e.message}');
+      //print('❌ AuthException: ${e.message}');
       MessageHelper.showError(
         e.message,
         title: 'Authentication Error',
       );
       return null;
     } on PlatformException catch (e) {
-      print('❌ PlatformException: Code: ${e.code}, Message: ${e.message}, Details: ${e.details}');
+      //print('❌ PlatformException: Code: ${e.code}, Message: ${e.message}, Details: ${e.details}');
       String errorMessage = 'Google Sign-in failed';
 
       switch (e.code) {
@@ -207,14 +207,14 @@ class AuthService extends GetxController {
       );
       return null;
     } catch (e) {
-      print('❌ Unexpected error: $e');
+      //print('❌ Unexpected error: $e');
       MessageHelper.showError(
         'Google Sign-in failed: $e',
       );
       return null;
     } finally {
       isLoading.value = false;
-      print('🔵 Google Sign-In process completed');
+      //print('🔵 Google Sign-In process completed');
     }
   }
 
@@ -627,13 +627,13 @@ class AuthService extends GetxController {
     try {
       final userId = currentUser.value?.id;
       if (userId == null) {
-        print('Upload failed: User ID is null');
+        //print('Upload failed: User ID is null');
         return null;
       }
 
-      print('Starting image upload for user: $userId');
+      //print('Starting image upload for user: $userId');
       final fileName = 'profile_${userId}_${DateTime.now().millisecondsSinceEpoch}.jpg';
-      print('Generated filename: $fileName');
+      //print('Generated filename: $fileName');
 
       // Try common public bucket names first
       final buckets = ['avatars', 'public', 'images', 'uploads', 'profiles'];
@@ -642,32 +642,32 @@ class AuthService extends GetxController {
 
       for (String bucketName in buckets) {
         try {
-          print('Attempting to upload to $bucketName bucket...');
+          //print('Attempting to upload to $bucketName bucket...');
           response = await _supabase.storage
               .from(bucketName)
               .upload(fileName, imageFile);
           usedBucket = bucketName;
-          print('Successfully uploaded to $bucketName bucket');
+          //print('Successfully uploaded to $bucketName bucket');
           break;
         } catch (bucketError) {
-          print('Failed to upload to $bucketName: $bucketError');
+          //print('Failed to upload to $bucketName: $bucketError');
           continue;
         }
       }
 
-      print('Upload response: $response');
+      //print('Upload response: $response');
 
       if (response != null && response.isNotEmpty && usedBucket != null) {
         final publicUrl = _supabase.storage.from(usedBucket).getPublicUrl(fileName);
-        print('Public URL generated: $publicUrl');
+        //print('Public URL generated: $publicUrl');
         return publicUrl;
       }
 
-      print('Upload response was empty');
+      //print('Upload response was empty');
       return null;
     } catch (e, stackTrace) {
-      print('Exception during image upload: $e');
-      print('Stack trace: $stackTrace');
+      //print('Exception during image upload: $e');
+      //print('Stack trace: $stackTrace');
       MessageHelper.showError(
         'Failed to upload profile image: $e',
       );

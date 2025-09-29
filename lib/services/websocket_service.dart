@@ -44,7 +44,7 @@ class WebSocketService {
       _realTimeStream = _realTimeController!.stream;
       _isConnected = true;
 
-      print('🔗 Connected to asset forecast WebSocket for $symbol');
+      //print('🔗 Connected to asset forecast WebSocket for $symbol');
 
       _channel!.stream.listen(
             (data) {
@@ -57,18 +57,18 @@ class WebSocketService {
               _realTimeController!.add(realTimeUpdate);
             }
           } catch (e) {
-            print('Error parsing WebSocket data for $symbol: $e');
+            //print('Error parsing WebSocket data for $symbol: $e');
           }
         },
         onError: (error) {
-          print('WebSocket error for $symbol: $error');
+          //print('WebSocket error for $symbol: $error');
           _isConnected = false;
           Future.delayed(Duration(seconds: 5), () {
             connectToAssetForecast(symbol);
           });
         },
         onDone: () {
-          print('WebSocket connection closed for $symbol');
+          //print('WebSocket connection closed for $symbol');
           _isConnected = false;
           Future.delayed(Duration(seconds: 5), () {
             connectToAssetForecast(symbol);
@@ -76,7 +76,7 @@ class WebSocketService {
         },
       );
     } catch (e) {
-      print('Error connecting to WebSocket for $symbol: $e');
+      //print('Error connecting to WebSocket for $symbol: $e');
       _isConnected = false;
       Future.delayed(Duration(seconds: 5), () {
         connectToAssetForecast(symbol);
@@ -98,7 +98,7 @@ class WebSocketService {
       _trendsStream = _trendsController!.stream;
       _isConnected = true;
 
-      print('🔗 Connected to trends WebSocket for $symbol');
+      //print('🔗 Connected to trends WebSocket for $symbol');
 
       _channel!.stream.listen(
             (data) {
@@ -107,20 +107,20 @@ class WebSocketService {
             _controller!.add(jsonData);
             final trendsUpdate = TrendsUpdate.fromJson(jsonData);
             _trendsController!.add(trendsUpdate);
-            print('📈 Trends update received: ${trendsUpdate.symbol} - Accuracy: ${trendsUpdate.accuracy.toStringAsFixed(1)}%');
+            //print('📈 Trends update received: ${trendsUpdate.symbol} - Accuracy: ${trendsUpdate.accuracy.toStringAsFixed(1)}%');
           } catch (e) {
-            print('Error parsing WebSocket data for $symbol: $e');
+            //print('Error parsing WebSocket data for $symbol: $e');
           }
         },
         onError: (error) {
-          print('WebSocket error for $symbol: $error');
+          //print('WebSocket error for $symbol: $error');
           _isConnected = false;
           Future.delayed(Duration(seconds: 5), () {
             connectToAssetTrends(symbol);
           });
         },
         onDone: () {
-          print('WebSocket connection closed for $symbol');
+          //print('WebSocket connection closed for $symbol');
           _isConnected = false;
           Future.delayed(Duration(seconds: 5), () {
             connectToAssetTrends(symbol);
@@ -128,7 +128,7 @@ class WebSocketService {
         },
       );
     } catch (e) {
-      print('Error connecting to WebSocket for $symbol: $e');
+      //print('Error connecting to WebSocket for $symbol: $e');
       _isConnected = false;
       Future.delayed(Duration(seconds: 5), () {
         connectToAssetTrends(symbol);
@@ -154,7 +154,7 @@ class WebSocketService {
       _realTimeStream = _realTimeController!.stream;
       _isConnected = true;
 
-      print('🔗 Connected to market summary WebSocket for ${assetClass ?? 'all assets'}');
+      //print('🔗 Connected to market summary WebSocket for ${assetClass ?? 'all assets'}');
 
       if (symbols != null && symbols.isNotEmpty) {
         sendMessage({
@@ -177,18 +177,18 @@ class WebSocketService {
               _realTimeController!.add(realTimeUpdate);
             }
           } catch (e) {
-            print('Error parsing WebSocket data: $e');
+            //print('Error parsing WebSocket data: $e');
           }
         },
         onError: (error) {
-          print('Market WebSocket error: $error');
+          //print('Market WebSocket error: $error');
           _isConnected = false;
           Future.delayed(Duration(seconds: 5), () {
             connectToMarketSummary(assetClass: assetClass, symbols: symbols);
           });
         },
         onDone: () {
-          print('Market WebSocket connection closed');
+          //print('Market WebSocket connection closed');
           _isConnected = false;
           Future.delayed(Duration(seconds: 5), () {
             connectToMarketSummary(assetClass: assetClass, symbols: symbols);
@@ -196,7 +196,7 @@ class WebSocketService {
         },
       );
     } catch (e) {
-      print('Error connecting to market WebSocket: $e');
+      //print('Error connecting to market WebSocket: $e');
       _isConnected = false;
       Future.delayed(Duration(seconds: 5), () {
         connectToMarketSummary(assetClass: assetClass, symbols: symbols);
@@ -206,7 +206,7 @@ class WebSocketService {
 
   Future<void> connectToRealtimeUpdates(List<String> symbols) async {
     if (symbols.isEmpty) {
-      print('No symbols provided for real-time updates');
+      //print('No symbols provided for real-time updates');
       return;
     }
 
@@ -221,18 +221,18 @@ class WebSocketService {
         _realTimeStream = _realTimeController!.stream;
         _isConnected = true;
 
-        print('🎯 Initializing shared streams for real-time updates');
+        //print('🎯 Initializing shared streams for real-time updates');
 
         await _connectToIndividualAssets(symbols);
       } catch (e) {
-        print('Error initiating real-time updates: $e');
+        //print('Error initiating real-time updates: $e');
         _isConnected = false;
         Future.delayed(Duration(seconds: 5), () {
           connectToRealtimeUpdates(symbols);
         });
       }
     } else {
-      print('✅ Real-time connection already active for required symbols');
+      //print('✅ Real-time connection already active for required symbols');
     }
   }
 
@@ -243,14 +243,14 @@ class WebSocketService {
 
   Future<void> _connectToIndividualAssets(List<String> symbols) async {
     if (symbols.isEmpty) {
-      print('No symbols provided for individual connections');
+      //print('No symbols provided for individual connections');
       return;
     }
 
     try {
       await _disconnectParallelChannels();
 
-      print('🚀 Creating parallel connections for ${symbols.length} symbols: $symbols');
+      //print('🚀 Creating parallel connections for ${symbols.length} symbols: $symbols');
 
       for (final symbol in symbols) {
         try {
@@ -259,19 +259,19 @@ class WebSocketService {
           );
 
           _parallelChannels.add(channel);
-          print('🔗 Connected to asset forecast: $symbol');
+          //print('🔗 Connected to asset forecast: $symbol');
 
           channel.stream.listen(
                 (data) => _handleParallelWebSocketData(data, symbol),
             onError: (error) {
-              print('❌ WebSocket error for $symbol: $error');
+              //print('❌ WebSocket error for $symbol: $error');
               _parallelChannels.removeWhere((ch) => ch == channel);
               Future.delayed(Duration(seconds: 5), () {
                 _reconnectSingleAsset(symbol);
               });
             },
             onDone: () {
-              print('🔚 WebSocket connection closed for $symbol');
+              //print('🔚 WebSocket connection closed for $symbol');
               _parallelChannels.removeWhere((ch) => ch == channel);
               Future.delayed(Duration(seconds: 5), () {
                 _reconnectSingleAsset(symbol);
@@ -279,7 +279,7 @@ class WebSocketService {
             },
           );
         } catch (e) {
-          print('❌ Failed to connect to $symbol: $e');
+          //print('❌ Failed to connect to $symbol: $e');
           Future.delayed(Duration(seconds: 5), () {
             _reconnectSingleAsset(symbol);
           });
@@ -287,14 +287,14 @@ class WebSocketService {
       }
 
       if (_parallelChannels.isEmpty) {
-        print('❌ No parallel connections established');
+        //print('❌ No parallel connections established');
         _isConnected = false;
         Future.delayed(Duration(seconds: 5), () {
           _connectToIndividualAssets(symbols);
         });
       }
     } catch (e) {
-      print('❌ Error setting up parallel connections: $e');
+      //print('❌ Error setting up parallel connections: $e');
       _isConnected = false;
       Future.delayed(Duration(seconds: 5), () {
         _connectToIndividualAssets(symbols);
@@ -309,19 +309,19 @@ class WebSocketService {
       );
 
       _parallelChannels.add(channel);
-      print('🔗 Reconnected to asset forecast: $symbol');
+      //print('🔗 Reconnected to asset forecast: $symbol');
 
       channel.stream.listen(
             (data) => _handleParallelWebSocketData(data, symbol),
         onError: (error) {
-          print('❌ WebSocket error for $symbol: $error');
+          //print('❌ WebSocket error for $symbol: $error');
           _parallelChannels.removeWhere((ch) => ch == channel);
           Future.delayed(Duration(seconds: 5), () {
             _reconnectSingleAsset(symbol);
           });
         },
         onDone: () {
-          print('🔚 WebSocket connection closed for $symbol');
+          //print('🔚 WebSocket connection closed for $symbol');
           _parallelChannels.removeWhere((ch) => ch == channel);
           Future.delayed(Duration(seconds: 5), () {
             _reconnectSingleAsset(symbol);
@@ -329,7 +329,7 @@ class WebSocketService {
         },
       );
     } catch (e) {
-      print('❌ Failed to reconnect to $symbol: $e');
+      //print('❌ Failed to reconnect to $symbol: $e');
       Future.delayed(Duration(seconds: 5), () {
         _reconnectSingleAsset(symbol);
       });
@@ -346,7 +346,7 @@ class WebSocketService {
         try {
           jsonData = json.decode(data);
         } catch (decodeError) {
-          print('❌ JSON decode error for $expectedSymbol: $decodeError');
+          //print('❌ JSON decode error for $expectedSymbol: $decodeError');
           return;
         }
       } else if (data is Map) {
@@ -356,13 +356,13 @@ class WebSocketService {
         try {
           jsonData = json.decode(dataString);
         } catch (decodeError) {
-          print('❌ JSON decode error for $expectedSymbol: $decodeError');
+          //print('❌ JSON decode error for $expectedSymbol: $decodeError');
           return;
         }
       }
 
       if (jsonData is! Map<String, dynamic>) {
-        print('❌ Expected Map<String, dynamic> for $expectedSymbol, got ${jsonData.runtimeType}');
+        //print('❌ Expected Map<String, dynamic> for $expectedSymbol, got ${jsonData.runtimeType}');
         return;
       }
 
@@ -381,11 +381,11 @@ class WebSocketService {
             _realTimeController!.add(realTimeUpdate);
           }
         } catch (parseError) {
-          print('❌ Error creating RealTimeUpdate for $symbol: $parseError');
+          //print('❌ Error creating RealTimeUpdate for $symbol: $parseError');
         }
       }
     } catch (e) {
-      print('❌ Unexpected error handling data for $expectedSymbol: $e');
+      //print('❌ Unexpected error handling data for $expectedSymbol: $e');
     }
   }
 
@@ -394,7 +394,7 @@ class WebSocketService {
       try {
         await channel.sink.close(status.goingAway);
       } catch (e) {
-        print('Error closing parallel channel: $e');
+        //print('Error closing parallel channel: $e');
       }
     }
     _parallelChannels.clear();
@@ -408,7 +408,7 @@ class WebSocketService {
       try {
         channel.sink.add(json.encode(message));
       } catch (e) {
-        print('Error sending message to parallel channel: $e');
+        //print('Error sending message to parallel channel: $e');
       }
     }
   }
@@ -442,11 +442,11 @@ class WebSocketService {
       _isConnected = true;
 
 
-      print('📈 Connected to chart WebSocket for $symbol ($timeframe)');
+      //print('📈 Connected to chart WebSocket for $symbol ($timeframe)');
 
       _channel!.stream.listen(
             (data) {
-          print('📡 Received WebSocket data: $data');
+          //print('📡 Received WebSocket data: $data');
           try {
             final jsonData = json.decode(data is String ? data : data.toString());
             _controller!.add(jsonData);
@@ -454,28 +454,28 @@ class WebSocketService {
 
             if (jsonData['type'] == 'chart_update') {
               final chartUpdate = ChartUpdate.fromJson(jsonData);
-              print('📊 Parsed ChartUpdate: symbol=${chartUpdate.symbol}, timeframe=${chartUpdate.timeframe}, pastPoints=${chartUpdate.chartData.pastDataPoints}, futurePoints=${chartUpdate.chartData.futureDataPoints}');
+              //print('📊 Parsed ChartUpdate: symbol=${chartUpdate.symbol}, timeframe=${chartUpdate.timeframe}, pastPoints=${chartUpdate.chartData.pastDataPoints}, futurePoints=${chartUpdate.chartData.futureDataPoints}');
               latestChartData[chartUpdate.symbol] = chartUpdate;
               _chartController!.add(chartUpdate);
             }
           } catch (e, stackTrace) {
-            print('❌ Error parsing chart WebSocket data for $symbol: $e');
-            print('StackTrace: $stackTrace');
+            //print('❌ Error parsing chart WebSocket data for $symbol: $e');
+            //print('StackTrace: $stackTrace');
           }
         },
         onError: (error) {
-          print('❌ Chart WebSocket error for $symbol: $error');
+          //print('❌ Chart WebSocket error for $symbol: $error');
           _isConnected = false;
           _scheduleReconnect(symbol, timeframe);
         },
         onDone: () {
-          print('🔚 Chart WebSocket connection closed for $symbol');
+          //print('🔚 Chart WebSocket connection closed for $symbol');
           _isConnected = false;
           _scheduleReconnect(symbol, timeframe);
         },
       );
     } catch (e) {
-      print('❌ Error connecting to chart WebSocket for $symbol: $e');
+      //print('❌ Error connecting to chart WebSocket for $symbol: $e');
       _isConnected = false;
       _scheduleReconnect(symbol, timeframe);
     }
@@ -484,7 +484,7 @@ class WebSocketService {
   void _scheduleReconnect(String symbol, String timeframe) {
     Future.delayed(Duration(seconds: 5), () {
       if (!_isConnected) {
-        print('🔄 Attempting to reconnect WebSocket for $symbol');
+        //print('🔄 Attempting to reconnect WebSocket for $symbol');
         connectToAssetChart(symbol, timeframe: timeframe);
       }
     });

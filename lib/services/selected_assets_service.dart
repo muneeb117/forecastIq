@@ -27,7 +27,7 @@ class SelectedAssetsService extends GetxController {
             .toList();
       }
     } catch (e) {
-      print('Error loading selected assets: $e');
+      //print('Error loading selected assets: $e');
     }
   }
 
@@ -39,7 +39,7 @@ class SelectedAssetsService extends GetxController {
       );
       await prefs.setString(_storageKey, jsonString);
     } catch (e) {
-      print('Error saving selected assets: $e');
+      //print('Error saving selected assets: $e');
     }
   }
 

@@ -80,7 +80,7 @@ class FavoritesService {
         _notifyListeners();
       }
     } catch (e) {
-      print('Error loading favorites: $e');
+      //print('Error loading favorites: $e');
       _favorites = [];
     }
   }
@@ -91,7 +91,7 @@ class FavoritesService {
       final favoritesJson = json.encode(_favorites.map((item) => item.toJson()).toList());
       await _prefs?.setString(_favoritesKey, favoritesJson);
     } catch (e) {
-      print('Error saving favorites: $e');
+      //print('Error saving favorites: $e');
     }
   }
 
@@ -190,7 +190,7 @@ class FavoritesService {
         listener(_favorites);
       } catch (e) {
         // Remove invalid listeners
-        print('Removing invalid listener: $e');
+        //print('Removing invalid listener: $e');
         _listeners.remove(listener);
       }
     }

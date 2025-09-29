@@ -66,9 +66,9 @@ class NotificationService extends GetxController {
       );
 
       isInitialized.value = true;
-      print('Notification service initialized successfully');
+      //print('Notification service initialized successfully');
     } catch (e) {
-      print('Error initializing notifications: $e');
+      //print('Error initializing notifications: $e');
     }
   }
 
@@ -92,7 +92,7 @@ class NotificationService extends GetxController {
   // Handle notification tap
   void _onNotificationTapped(NotificationResponse response) {
     // Always navigate to notifications list screen when any notification is tapped
-    print('Notification tapped: ${response.payload}');
+    //print('Notification tapped: ${response.payload}');
 
     // Save the notification to history if it's not already there
     _saveReceivedNotificationToHistory(response);
@@ -102,14 +102,14 @@ class NotificationService extends GetxController {
       // Navigate to notifications list screen
       Get.toNamed('/notifications');
     } catch (e) {
-      print('Error navigating to notifications list: $e');
+      //print('Error navigating to notifications list: $e');
     }
   }
 
   // Handle background notification tap
   @pragma('vm:entry-point')
   static void _onBackgroundNotificationTapped(NotificationResponse response) {
-    print('Background notification tapped: ${response.payload}');
+    //print('Background notification tapped: ${response.payload}');
     // Background notifications will be handled when app comes to foreground
   }
 
@@ -150,7 +150,7 @@ class NotificationService extends GetxController {
     String? type,
   }) async {
     if (!isInitialized.value) {
-      print('Notification service not initialized');
+      //print('Notification service not initialized');
       return;
     }
 
@@ -235,7 +235,7 @@ class NotificationService extends GetxController {
             coinSymbol = data['asset'] as String?;
             coinImage = _getCoinImage(coinSymbol);
           } catch (e) {
-            print('Error parsing payload for coin info: $e');
+            //print('Error parsing payload for coin info: $e');
           }
         }
 
@@ -439,7 +439,7 @@ class NotificationService extends GetxController {
             .toList();
       }
     } catch (e) {
-      print('Error loading scheduled notifications: $e');
+      //print('Error loading scheduled notifications: $e');
     }
   }
 
@@ -490,7 +490,7 @@ class NotificationService extends GetxController {
         type = data['type'] as String? ?? 'general';
         coinImage = _getCoinImage(coinSymbol);
       } catch (e) {
-        print('Error parsing notification payload: $e');
+        //print('Error parsing notification payload: $e');
       }
     }
 
@@ -554,7 +554,7 @@ class NotificationService extends GetxController {
           .toList();
       await prefs.setStringList('notification_history', jsonList);
     } catch (e) {
-      print('Error saving notification history: $e');
+      //print('Error saving notification history: $e');
     }
   }
 
@@ -575,7 +575,7 @@ class NotificationService extends GetxController {
             .toList();
       }
     } catch (e) {
-      print('Error loading notification history: $e');
+      //print('Error loading notification history: $e');
     }
   }
 
@@ -628,7 +628,7 @@ class NotificationService extends GetxController {
         type ??= data['type'] as String? ?? 'general';
         coinImage ??= _getCoinImage(coinSymbol);
       } catch (e) {
-        print('Error parsing received notification payload: $e');
+        //print('Error parsing received notification payload: $e');
       }
     }
 
@@ -646,7 +646,7 @@ class NotificationService extends GetxController {
 
     await _addNotificationToHistory(notification);
 
-    print('📱 Notification received and saved to history: $title');
+    //print('📱 Notification received and saved to history: $title');
   }
 
   // Get unread count
