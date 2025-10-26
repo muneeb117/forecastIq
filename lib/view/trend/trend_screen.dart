@@ -39,7 +39,7 @@ class TrendScreen extends GetView<TrendController> {
                   ),
                   const Spacer(),
                   GestureDetector(
-                    onTap: (){
+                    onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -103,71 +103,145 @@ class TrendScreen extends GetView<TrendController> {
 
               Obx(() => controller.showDropdown.value
                   ? Container(
-                      margin: EdgeInsets.only(top: 4.h),
+                margin: EdgeInsets.only(top: 4.h),
+                decoration: BoxDecoration(
+                  color: AppColors.ktertiary,
+                  borderRadius: BorderRadius.circular(8.r),
+                  border: Border.all(
+                    color: AppColors.kwhite.withValues(alpha: 0.1),
+                    width: 1,
+                  ),
+                ),
+                alignment: Alignment.centerLeft,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // Search bar
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12.w,
+                        vertical: 12.h,
+                      ),
                       decoration: BoxDecoration(
-                        color: AppColors.ktertiary,
-                        borderRadius: BorderRadius.circular(8.r),
-                        border: Border.all(
-                          color: AppColors.kwhite.withValues(alpha: 0.1),
-                          width: 1,
+                        border: Border(
+                          bottom: BorderSide(
+                            color: AppColors.kwhite.withValues(alpha: 0.1),
+                            width: 1,
+                          ),
                         ),
                       ),
-                      child: Column(
-                        children: controller.availableCoins.map((coin) {
-                          return GestureDetector(
-                            onTap: () => controller.selectCoin(coin['symbol']),
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 16.w,
-                                vertical: 12.h,
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.search,
+                            color: AppColors.kwhite2,
+                            size: 20.r,
+                          ),
+                          8.horizontalSpace,
+                          Expanded(
+                            child: TextField(
+                              onChanged: (value) => controller.updateSearchQuery(value),
+                              style: AppTextStyles.ktwhite14500.copyWith(
+                                color: AppColors.kwhite,
+                                fontSize: 14.sp,
                               ),
-                              decoration: BoxDecoration(
-                                border: Border(
-                                  bottom: BorderSide(
-                                    color: AppColors.kwhite.withValues(alpha: 0.1),
-                                    width: 0.5,
-                                  ),
+                              decoration: InputDecoration(
+                                hintText: 'Search assets...',
+                                hintStyle: AppTextStyles.ktwhite14500.copyWith(
+                                  color: AppColors.kwhite2,
+                                  fontSize: 14.sp,
                                 ),
-                              ),
-                              child: Row(
-                                children: [
-                                  _buildCoinIcon(coin['symbol']),
-                                  12.horizontalSpace,
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          coin['symbol'],
-                                          style: AppTextStyles.ktwhite16600.copyWith(
-                                            color: AppColors.kwhite,
-                                            fontSize: 14.sp,
-                                          ),
-                                        ),
-                                        Text(
-                                          coin['name'],
-                                          style: AppTextStyles.ktwhite14500.copyWith(
-                                            color: AppColors.kwhite2,
-                                            fontSize: 12.sp,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Text(
-                                    controller.getRealTimeAccuracy(coin['symbol']),
-                                    style: AppTextStyles.ktwhite14500.copyWith(
-                                      color: AppColors.kgreen,
-                                      fontSize: 12.sp,
-                                    ),
-                                  ),
-                                ],
+                                border: InputBorder.none,
+                                isDense: true,
+                                contentPadding: EdgeInsets.zero,
                               ),
                             ),
-                          );
-                        }).toList(),
+                          ),
+                        ],
                       ),
-                    )
+                    ),
+                    // Scrollable list
+                    Obx(() {
+                      final filteredCoins = controller.filteredCoins;
+                      if (filteredCoins.isEmpty) {
+                        return Padding(
+                          padding: EdgeInsets.symmetric(vertical: 0.h),
+                          child: Text(
+                            'No assets found',
+                            style: AppTextStyles.ktwhite14500.copyWith(
+                              color: AppColors.kwhite2,
+                            ),
+                          ),
+                        );
+                      }
+                      return Container(
+                        constraints: BoxConstraints(
+                          maxHeight: 300.h, // Limit height for scrolling
+                        ),
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: filteredCoins.length,
+                          itemBuilder: (context, index) {
+                            final coin = filteredCoins[index];
+                            return GestureDetector(
+                              onTap: () => controller.selectCoin(coin['symbol']),
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 16.w,
+                                  vertical: 12.h,
+                                ),
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    bottom: BorderSide(
+                                      color: AppColors.kwhite.withValues(alpha: 0.1),
+                                      width: 0.5,
+                                    ),
+                                  ),
+                                ),
+                                child: Row(
+                                  children: [
+                                    _buildCoinIcon(coin['symbol']),
+                                    12.horizontalSpace,
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            coin['symbol'],
+                                            style: AppTextStyles.ktwhite16600.copyWith(
+                                              color: AppColors.kwhite,
+                                              fontSize: 14.sp,
+                                            ),
+                                          ),
+                                          Text(
+                                            coin['name'],
+                                            style: AppTextStyles.ktwhite14500.copyWith(
+                                              color: AppColors.kwhite2,
+                                              fontSize: 12.sp,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Text(
+                                      controller.getRealTimeAccuracy(coin['symbol']),
+                                      style: AppTextStyles.ktwhite14500.copyWith(
+                                        color: AppColors.kgreen,
+                                        fontSize: 12.sp,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    }),
+                  ],
+                ),
+              )
                   : SizedBox.shrink()),
               16.verticalSpace,
 
@@ -243,41 +317,46 @@ class TrendScreen extends GetView<TrendController> {
                         color: AppColors.kwhite2,
                       ),
                     ),
-                    6.verticalSpace,
-                    Obx(() => Row(
-                      children: controller.timeFrames.asMap().entries.map((entry) {
-                        int index = entry.key;
-                        String filter = entry.value;
-                        bool isSelected = controller.selectedTimeFrameIndex.value == index;
-                        return GestureDetector(
-                          onTap: () => controller.changeTimeFrame(index),
-                          child: Container(
-                            margin: EdgeInsets.only(right: 13.w),
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 16.w,
-                              vertical: 8.h,
-                            ),
-                            decoration: BoxDecoration(
-                              color: isSelected
-                                  ? AppColors.kprimary
-                                  : AppColors.ksecondary,
-                              borderRadius: BorderRadius.circular(12.r),
-                            ),
-                            child: Text(
-                              filter,
-                              style: AppTextStyles.ktwhite14500.copyWith(
+                    // Hide timeframe filter for macro indicators
+                    if (!controller.isMacroIndicator) ...[
+                      6.verticalSpace,
+                      Obx(() => Row(
+                        children: controller.availableTimeFrames.asMap().entries.map((entry) {
+                          int displayIndex = entry.key;
+                          String filter = entry.value;
+                          // Get the actual index in the full timeFrames list
+                          int actualIndex = controller.timeFrames.indexOf(filter);
+                          bool isSelected = controller.selectedTimeFrameIndex.value == actualIndex;
+                          return GestureDetector(
+                            onTap: () => controller.changeTimeFrame(actualIndex),
+                            child: Container(
+                              margin: EdgeInsets.only(right: 13.w),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 16.w,
+                                vertical: 8.h,
+                              ),
+                              decoration: BoxDecoration(
                                 color: isSelected
-                                    ? AppColors.kwhite
-                                    : AppColors.kgrey11,
-                                fontWeight: isSelected
-                                    ? FontWeight.w600
-                                    : FontWeight.w400,
+                                    ? AppColors.kprimary
+                                    : AppColors.ksecondary,
+                                borderRadius: BorderRadius.circular(12.r),
+                              ),
+                              child: Text(
+                                filter,
+                                style: AppTextStyles.ktwhite14500.copyWith(
+                                  color: isSelected
+                                      ? AppColors.kwhite
+                                      : AppColors.kgrey11,
+                                  fontWeight: isSelected
+                                      ? FontWeight.w600
+                                      : FontWeight.w400,
+                                ),
                               ),
                             ),
-                          ),
-                        );
-                      }).toList(),
-                    )),
+                          );
+                        }).toList(),
+                      )),
+                    ],
                   ],
                 ),
               ),
@@ -347,39 +426,49 @@ class TrendScreen extends GetView<TrendController> {
               12.verticalSpace,
 
               // Chart or Trend History
-              Obx(() => controller.showTrendHistory.value
-                  ? _buildTrendHistory()
-                  : _buildChart()),
+              Obx(() {
+                if (controller.isLoading.value) {
+                  return controller.showTrendHistory.value
+                      ? _buildTrendHistoryShimmer()
+                      : _buildChartShimmer();
+                }
+                return controller.showTrendHistory.value
+                    ? _buildTrendHistory()
+                    : _buildChart();
+              }),
 
               12.verticalSpace,
 
               // Export CSV Button
               Center(
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    vertical: 16.h,
-                    horizontal: 16.w,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.transparent,
-                    borderRadius: BorderRadius.circular(100.r),
-                    border: Border.all(
-                      color: AppColors.kwhite.withValues(alpha: 0.2),
-                      width: 1,
+                child: GestureDetector(
+                  onTap: () => controller.exportToCSV(),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      vertical: 16.h,
+                      horizontal: 16.w,
                     ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SvgPicture.asset(
-                        AppImages.export,
-                        width: 24.w,
-                        height: 24.h,
+                    decoration: BoxDecoration(
+                      color: Colors.transparent,
+                      borderRadius: BorderRadius.circular(100.r),
+                      border: Border.all(
+                        color: AppColors.kwhite.withValues(alpha: 0.2),
+                        width: 1,
                       ),
-                      SizedBox(width: 8.w),
-                      Text('Export CSV', style: AppTextStyles.ktwhite14500),
-                    ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SvgPicture.asset(
+                          AppImages.export,
+                          width: 24.w,
+                          height: 24.h,
+                        ),
+                        SizedBox(width: 8.w),
+                        Text('Export CSV', style: AppTextStyles.ktwhite14500),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -393,7 +482,7 @@ class TrendScreen extends GetView<TrendController> {
 
   Widget _buildCoinIcon(String symbol) {
     final coin = controller.availableCoins.firstWhere(
-      (c) => c['symbol'] == symbol,
+          (c) => c['symbol'] == symbol,
       orElse: () => {'symbol': symbol, 'name': symbol, 'image': null},
     );
     return Container(
@@ -405,27 +494,14 @@ class TrendScreen extends GetView<TrendController> {
       ),
       child: coin['image'] != null
           ? ClipRRect(
-              borderRadius: BorderRadius.circular(14.r),
-              child: Image.asset(
-                coin['image'],
-                width: 28.w,
-                height: 28.h,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Center(
-                    child: Text(
-                      symbol.substring(0, 1),
-                      style: AppTextStyles.ktwhite14500.copyWith(
-                        color: AppColors.kwhite,
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  );
-                },
-              ),
-            )
-          : Center(
+        borderRadius: BorderRadius.circular(14.r),
+        child: Image.asset(
+          coin['image'],
+          width: 28.w,
+          height: 28.h,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return Center(
               child: Text(
                 symbol.substring(0, 1),
                 style: AppTextStyles.ktwhite14500.copyWith(
@@ -434,13 +510,26 @@ class TrendScreen extends GetView<TrendController> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-            ),
+            );
+          },
+        ),
+      )
+          : Center(
+        child: Text(
+          symbol.substring(0, 1),
+          style: AppTextStyles.ktwhite14500.copyWith(
+            color: AppColors.kwhite,
+            fontSize: 12.sp,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
     );
   }
 
   Widget _buildAccuracyCoinIcon(String symbol) {
     final coin = controller.availableCoins.firstWhere(
-      (c) => c['symbol'] == symbol,
+          (c) => c['symbol'] == symbol,
       orElse: () => {'symbol': symbol, 'name': symbol, 'image': null},
     );
     return Container(
@@ -452,27 +541,14 @@ class TrendScreen extends GetView<TrendController> {
       ),
       child: coin['image'] != null
           ? ClipRRect(
-              borderRadius: BorderRadius.circular(20.r),
-              child: Image.asset(
-                coin['image'],
-                width: 40.w,
-                height: 40.h,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Center(
-                    child: Text(
-                      symbol.substring(0, 1),
-                      style: AppTextStyles.ktwhite16600.copyWith(
-                        color: AppColors.kwhite,
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  );
-                },
-              ),
-            )
-          : Center(
+        borderRadius: BorderRadius.circular(20.r),
+        child: Image.asset(
+          coin['image'],
+          width: 40.w,
+          height: 40.h,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return Center(
               child: Text(
                 symbol.substring(0, 1),
                 style: AppTextStyles.ktwhite16600.copyWith(
@@ -481,7 +557,93 @@ class TrendScreen extends GetView<TrendController> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
+            );
+          },
+        ),
+      )
+          : Center(
+        child: Text(
+          symbol.substring(0, 1),
+          style: AppTextStyles.ktwhite16600.copyWith(
+            color: AppColors.kwhite,
+            fontSize: 18.sp,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildChartShimmer() {
+    return Container(
+      padding: EdgeInsets.all(16.w),
+      decoration: BoxDecoration(
+        color: AppColors.ksecondary,
+        borderRadius: BorderRadius.circular(12.r),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              _buildShimmerPlaceholder(height: 20.h, width: 80.w),
+              const Spacer(),
+              _buildShimmerPlaceholder(height: 20.h, width: 120.w),
+            ],
+          ),
+          24.verticalSpace,
+          _buildShimmerPlaceholder(
+            height: 200.h,
+            width: double.infinity,
+            borderRadius: BorderRadius.circular(12.r),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTrendHistoryShimmer() {
+    return Container(
+      padding: EdgeInsets.all(12.w),
+      decoration: BoxDecoration(
+        color: AppColors.ksecondary,
+        borderRadius: BorderRadius.circular(12.r),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildShimmerPlaceholder(height: 20.h, width: 150.w),
+          16.verticalSpace,
+          Row(
+            children: [
+              Expanded(flex: 2, child: _buildShimmerPlaceholder(height: 16.h, width: double.infinity)),
+              SizedBox(width: 12.w),
+              Expanded(child: _buildShimmerPlaceholder(height: 16.h, width: double.infinity)),
+              SizedBox(width: 12.w),
+              Expanded(child: _buildShimmerPlaceholder(height: 16.h, width: double.infinity)),
+              SizedBox(width: 12.w),
+              Expanded(child: _buildShimmerPlaceholder(height: 16.h, width: double.infinity)),
+            ],
+          ),
+          12.verticalSpace,
+          Divider(color: AppColors.kwhite3, height: 1.h),
+          12.verticalSpace,
+          ...List.generate(5, (index) => Padding(
+            padding: EdgeInsets.only(bottom: 8.h),
+            child: Row(
+              children: [
+                Expanded(flex: 2, child: _buildShimmerPlaceholder(height: 16.h, width: double.infinity)),
+                SizedBox(width: 12.w),
+                Expanded(child: _buildShimmerPlaceholder(height: 16.h, width: double.infinity)),
+                SizedBox(width: 12.w),
+                Expanded(child: _buildShimmerPlaceholder(height: 16.h, width: double.infinity)),
+                SizedBox(width: 12.w),
+                Expanded(child: _buildShimmerPlaceholder(height: 16.h, width: double.infinity)),
+              ],
             ),
+          )),
+        ],
+      ),
     );
   }
 
@@ -549,33 +711,29 @@ class TrendScreen extends GetView<TrendController> {
               color: AppColors.ktertiary.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(12.r),
             ),
-            child: Obx(() => controller.isLoading.value
-                ? Center(
-                    child: CircularProgressIndicator(color: AppColors.kprimary),
-                  )
-                : controller.hasData
-                    ? Stack(
-                        children: [
-                          CustomPaint(
-                            painter: ChartPainter(apiData: controller.trendData.value),
-                            size: Size.infinite,
-                          ),
-                          Positioned(
-                            bottom: 10.h,
-                            left: 0,
-                            right: 0,
-                            child: _buildTimeLabels(),
-                          ),
-                        ],
-                      )
-                    : Center(
-                        child: Text(
-                          'No data available',
-                          style: AppTextStyles.kblack14500.copyWith(
-                            color: AppColors.kwhite2,
-                          ),
-                        ),
-                      )),
+            child: Obx(() => controller.hasData
+                ? Stack(
+              children: [
+                CustomPaint(
+                  painter: ChartPainter(apiData: controller.trendData.value),
+                  size: Size.infinite,
+                ),
+                Positioned(
+                  bottom: 10.h,
+                  left: 0,
+                  right: 0,
+                  child: _buildTimeLabels(),
+                ),
+              ],
+            )
+                : Center(
+              child: Text(
+                'No data available',
+                style: AppTextStyles.kblack14500.copyWith(
+                  color: AppColors.kwhite2,
+                ),
+              ),
+            )),
           ),
         ],
       ),
@@ -583,27 +741,30 @@ class TrendScreen extends GetView<TrendController> {
   }
 
   Widget _buildTimeLabels() {
-    final timeframe = controller.currentTimeFrame;
-    List<String> labels;
+    if (!controller.hasData || controller.trendData.value!.accuracyHistory.isEmpty) {
+      return Center(
+        child: Text(
+          'No time data available',
+          style: AppTextStyles.kblack12400.copyWith(
+            color: AppColors.kwhite,
+          ),
+        ),
+      );
+    }
 
-    switch (timeframe) {
-      case '1H':
-        labels = ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '23:59'];
-        break;
-      case '4H':
-        labels = ['00:00', '06:00', '12:00', '18:00', '23:59'];
-        break;
-      case '1D':
-        labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-        break;
-      case '7D':
-        labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
-        break;
-      case '1M':
-        labels = ['Jan', 'Mar', 'May', 'Jul', 'Sep', 'Nov'];
-        break;
-      default:
-        labels = ['Start', 'Mid', 'End'];
+    final history = controller.trendData.value!.accuracyHistory;
+    // Select up to 7 labels to avoid clutter, evenly spaced
+    const maxLabels = 7;
+    final step = (history.length / maxLabels).ceil();
+    final labels = <String>[];
+
+    for (int i = 0; i < history.length && labels.length < maxLabels; i += step) {
+      labels.add(_formatDate(history[i].date));
+    }
+
+    // Ensure the last date is included if possible
+    if (history.length > maxLabels && labels.length == maxLabels) {
+      labels[maxLabels - 1] = _formatDate(history.last.date);
     }
 
     return Row(
@@ -611,12 +772,13 @@ class TrendScreen extends GetView<TrendController> {
       children: labels
           .map(
             (label) => Text(
-              label,
-              style: AppTextStyles.kblack12400.copyWith(
-                color: AppColors.kwhite,
-              ),
-            ),
-          )
+          label,
+          style: AppTextStyles.kblack12400.copyWith(
+            color: AppColors.kwhite,
+            fontSize: 10.sp, // Adjust font size for readability
+          ),
+        ),
+      )
           .toList(),
     );
   }
@@ -678,9 +840,29 @@ class TrendScreen extends GetView<TrendController> {
                     // Real data rows from API
                     ...controller.trendData.value!.accuracyHistory.map((historyItem) {
                       final isHit = historyItem.isHit;
-                      // Determine trend direction based on predicted vs actual values
-                      final forecastTrend = _getTrendDirection(historyItem.predicted, historyItem.actual, true);
-                      final actualTrend = _getTrendDirection(historyItem.actual, historyItem.predicted, false);
+                      final predicted = historyItem.predicted;
+                      final actual = historyItem.actual;
+
+                      Map<String, dynamic> forecastTrend;
+                      Map<String, dynamic> actualTrend;
+
+                      if (isHit) {
+                        if (predicted < actual) { // User rule 1: Hit, pred < act -> Up, Up
+                          forecastTrend = {'text': 'Up', 'color': AppColors.kgreen, 'icon': AppImages.up};
+                          actualTrend = {'text': 'Up', 'color': AppColors.kgreen, 'icon': AppImages.up};
+                        } else { // User rule 2: Hit, pred >= act -> Down, Down
+                          forecastTrend = {'text': 'Down', 'color': AppColors.kred, 'icon': AppImages.down};
+                          actualTrend = {'text': 'Down', 'color': AppColors.kred, 'icon': AppImages.down};
+                        }
+                      } else { // Miss
+                        if (predicted > actual) { // User rule 3: Miss, pred > act -> pred Up, act Down
+                          forecastTrend = {'text': 'Up', 'color': AppColors.kgreen, 'icon': AppImages.up};
+                          actualTrend = {'text': 'Down', 'color': AppColors.kred, 'icon': AppImages.down};
+                        } else { // User rule 4: Miss, act >= pred -> pred Down, act Up
+                          forecastTrend = {'text': 'Down', 'color': AppColors.kred, 'icon': AppImages.down};
+                          actualTrend = {'text': 'Up', 'color': AppColors.kgreen, 'icon': AppImages.up};
+                        }
+                      }
 
                       return Padding(
                         padding: EdgeInsets.only(bottom: 8.h),
@@ -805,25 +987,12 @@ class TrendScreen extends GetView<TrendController> {
     try {
       final date = DateTime.parse(dateStr);
       final months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
       return '${months[date.month - 1]} ${date.day}';
     } catch (e) {
       return dateStr;
     }
   }
-
-  Map<String, dynamic> _getTrendDirection(double value1, double value2, bool isPredicted) {
-    // Simple trend logic - you can make this more sophisticated
-    // For now, just compare if predicted is higher or lower than actual
-    final isUp = value1 > value2;
-
-    return {
-      'text': isUp ? 'Up' : 'Down',
-      'color': isUp ? AppColors.kgreen : AppColors.kred,
-      'icon': isUp ? AppImages.up : AppImages.down,
-    };
-  }
-
 }
 
 class ChartPainter extends CustomPainter {
@@ -990,4 +1159,88 @@ class ChartPainter extends CustomPainter {
     if (oldDelegate is! ChartPainter) return true;
     return oldDelegate.apiData != apiData;
   }
+}
+
+class _Shimmer extends StatefulWidget {
+  const _Shimmer({
+    required this.child,
+  });
+
+  final Widget child;
+
+  @override
+  State<_Shimmer> createState() => _ShimmerState();
+}
+
+class _ShimmerState extends State<_Shimmer> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return ShaderMask(
+          shaderCallback: (bounds) {
+            return LinearGradient(
+              transform: _SlidingGradientTransform(slidePercent: _controller.value),
+              colors: const [
+                Color(0xFF3A3A3A),
+                Color(0xFF4A4A4A),
+                Color(0xFF3A3A3A),
+              ],
+              stops: const [0.4, 0.5, 0.6],
+            ).createShader(bounds);
+          },
+          blendMode: BlendMode.srcATop,
+          child: widget.child,
+        );
+      },
+    );
+  }
+}
+
+class _SlidingGradientTransform extends GradientTransform {
+  const _SlidingGradientTransform({
+    required this.slidePercent,
+  });
+
+  final double slidePercent;
+
+  @override
+  Matrix4? transform(Rect bounds, {TextDirection? textDirection}) {
+    return Matrix4.translationValues(bounds.width * slidePercent, 0.0, 0.0);
+  }
+}
+
+Widget _buildShimmerPlaceholder({
+  required double height,
+  required double width,
+  BorderRadius? borderRadius,
+}) {
+  return _Shimmer(
+    child: Container(
+      height: height,
+      width: width,
+      decoration: BoxDecoration(
+        color: Colors.black,
+        borderRadius: borderRadius ?? BorderRadius.circular(4),
+      ),
+    ),
+  );
 }
