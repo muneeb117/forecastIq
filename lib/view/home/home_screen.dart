@@ -8,9 +8,12 @@ import '../../core/constants/colors.dart';
 import '../../core/constants/fonts.dart';
 import '../../models/models.dart';
 import '../../widgets/item_widget.dart';
+import '../../widgets/skeleton_widgets.dart';
 
 import '../../services/auth_service.dart';
 import '../notifications/notifications_list_screen.dart';
+import 'trending_screen.dart';
+import 'market_summary_screen.dart';
 
 class HomeScreen extends GetView<ForecastController> {
    HomeScreen({super.key});
@@ -136,7 +139,7 @@ class HomeScreen extends GetView<ForecastController> {
               8.verticalSpace,
 
               // Content based on selected tab
-              Obx(() => _buildTabContent()),
+              Obx(() => _buildTabContent(context)),
               100.verticalSpace,
             ],
           ),
@@ -145,10 +148,10 @@ class HomeScreen extends GetView<ForecastController> {
     );
   }
 
-  Widget _buildTabContent() {
+  Widget _buildTabContent(BuildContext context) {
     switch (controller.selectedTabIndex.value) {
       case 0: // All
-        return _buildAllContent();
+        return _buildAllContent(context);
       case 1: // Stocks
         return _buildStocksContent();
       case 2: // Crypto
@@ -158,13 +161,23 @@ class HomeScreen extends GetView<ForecastController> {
       case 4: // Favorites
         return _buildFavoritesContent();
       default:
-        return _buildAllContent();
+        return _buildAllContent(context);
     }
   }
 
-  Widget _buildAllContent() {
+  Widget _buildAllContent(BuildContext context) {
     if (controller.isLoading.value) {
-      return Center(child: CircularProgressIndicator(color: AppColors.kprimary));
+      return Column(
+        children: [
+          const AssetListItemSkeleton(),
+          12.verticalSpace,
+          const AssetListItemSkeleton(),
+          12.verticalSpace,
+          const AssetListItemSkeleton(),
+          12.verticalSpace,
+          const AssetListItemSkeleton(),
+        ],
+      );
     }
 
     return Column(
@@ -181,7 +194,14 @@ class HomeScreen extends GetView<ForecastController> {
               ),
             ),
             GestureDetector(
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const TrendingScreen(),
+                  ),
+                );
+              },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -221,7 +241,14 @@ class HomeScreen extends GetView<ForecastController> {
               ),
             ),
             GestureDetector(
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const MarketSummaryScreen(),
+                  ),
+                );
+              },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -256,7 +283,15 @@ class HomeScreen extends GetView<ForecastController> {
 
   Widget _buildStocksContent() {
     if (controller.isLoading.value) {
-      return Center(child: CircularProgressIndicator(color: AppColors.kprimary));
+      return Column(
+        children: [
+          const AssetListItemSkeleton(),
+          12.verticalSpace,
+          const AssetListItemSkeleton(),
+          12.verticalSpace,
+          const AssetListItemSkeleton(),
+        ],
+      );
     }
 
     return Column(
@@ -272,7 +307,15 @@ class HomeScreen extends GetView<ForecastController> {
 
   Widget _buildCryptoContent() {
     if (controller.isLoading.value) {
-      return Center(child: CircularProgressIndicator(color: AppColors.kprimary));
+      return Column(
+        children: [
+          const AssetListItemSkeleton(),
+          12.verticalSpace,
+          const AssetListItemSkeleton(),
+          12.verticalSpace,
+          const AssetListItemSkeleton(),
+        ],
+      );
     }
 
     return Column(
@@ -288,7 +331,15 @@ class HomeScreen extends GetView<ForecastController> {
 
   Widget _buildMacroContent() {
     if (controller.isLoading.value) {
-      return Center(child: CircularProgressIndicator(color: AppColors.kprimary));
+      return Column(
+        children: [
+          const AssetListItemSkeleton(),
+          12.verticalSpace,
+          const AssetListItemSkeleton(),
+          12.verticalSpace,
+          const AssetListItemSkeleton(),
+        ],
+      );
     }
 
     return Column(
@@ -304,7 +355,15 @@ class HomeScreen extends GetView<ForecastController> {
 
   Widget _buildFavoritesContent() {
     if (controller.isLoading.value) {
-      return Center(child: CircularProgressIndicator(color: AppColors.kprimary));
+      return Column(
+        children: [
+          const AssetListItemSkeleton(),
+          12.verticalSpace,
+          const AssetListItemSkeleton(),
+          12.verticalSpace,
+          const AssetListItemSkeleton(),
+        ],
+      );
     }
 
     if (controller.favoriteAssets.isEmpty) {
