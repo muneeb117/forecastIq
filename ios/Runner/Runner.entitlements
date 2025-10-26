@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Push Notifications Capability -->
+	<key>aps-environment</key>
+	<string>development</string>
+
+	<!-- Background Modes -->
+	<key>com.apple.developer.background-modes</key>
+	<array>
+		<string>background-processing</string>
+		<string>background-fetch</string>
+		<string>remote-notification</string>
+	</array>
+
+	<!-- Associated Domains for Deep Linking -->
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:forcast.app</string>
+		<string>applinks:www.forcast.app</string>
+	</array>
+
+
+	<!-- Network Extensions -->
+	<key>com.apple.developer.networking.networkextension</key>
+	<array>
+		<string>packet-tunnel-provider</string>
+	</array>
+
+
+	<!-- Sign in with Apple -->
+	<key>com.apple.developer.applesignin</key>
+	<array>
+		<string>Default</string>
+	</array>
+
+</dict>
+</plist>
