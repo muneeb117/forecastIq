@@ -7,6 +7,7 @@ import '../../core/constants/fonts.dart';
 import '../../core/constants/images.dart';
 import '../../models/models.dart';
 import '../../widgets/item_widget.dart';
+import '../../widgets/skeleton_widgets.dart';
 import '../../controllers/forecast_controller.dart';
 import '../notifications/notifications_list_screen.dart';
 
@@ -211,7 +212,15 @@ class ForcastScreen extends GetView<ForecastController> {
 
   Widget _buildFavoritesContent() {
     if (controller.isLoading.value) {
-      return Center(child: CircularProgressIndicator(color: AppColors.kprimary));
+      return Column(
+        children: [
+          const AssetListItemSkeleton(),
+          12.verticalSpace,
+          const AssetListItemSkeleton(),
+          12.verticalSpace,
+          const AssetListItemSkeleton(),
+        ],
+      );
     }
 
     if (controller.favoriteAssets.isEmpty) {
@@ -250,8 +259,14 @@ class ForcastScreen extends GetView<ForecastController> {
 
   Widget _buildForecastContent(List<MarketSummary> forecasts) {
     if (controller.isLoading.value) {
-      return Center(
-        child: CircularProgressIndicator(color: AppColors.kprimary),
+      return Column(
+        children: [
+          const AssetListItemSkeleton(),
+          12.verticalSpace,
+          const AssetListItemSkeleton(),
+          12.verticalSpace,
+          const AssetListItemSkeleton(),
+        ],
       );
     }
 
