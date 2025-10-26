@@ -39,9 +39,12 @@ class CoinDetailScreen extends StatefulWidget {
   State<CoinDetailScreen> createState() => _CoinDetailScreenState();
 }
 
-class _CoinDetailScreenState extends State<CoinDetailScreen> {
+class _CoinDetailScreenState extends State<CoinDetailScreen> with TickerProviderStateMixin {
   int _selectedTimeFrame = 2; // Default to 1d
   final List<String> _timeFrames = ['1h', '4h', '1d', '7d', '1M'];
+
+  // Macro indicators (only support 1D timeframe)
+  final List<String> _macroIndicators = ['GDP', 'CPI', 'UNEMPLOYMENT', 'FED_RATE', 'CONSUMER_CONFIDENCE'];
 
   // Shared WebSocket service
   final WebSocketService _webSocketService = WebSocketService();
@@ -67,9 +70,24 @@ class _CoinDetailScreenState extends State<CoinDetailScreen> {
   // Screenshot functionality
   final ScreenshotController _screenshotController = ScreenshotController();
 
+  // Check if current symbol is a macro indicator
+  bool get _isMacroIndicator => _macroIndicators.contains(widget.symbol);
+
+  // Get available timeframes based on asset type
+  List<String> get _availableTimeFrames {
+    if (_isMacroIndicator) {
+      return ['1d']; // Macro indicators only support 1D
+    }
+    return _timeFrames; // Crypto and stocks support all timeframes
+  }
+
   @override
   void initState() {
     super.initState();
+    // Force 1D timeframe for macro indicators
+    if (_isMacroIndicator) {
+      _selectedTimeFrame = 2; // Index 2 = '1d'
+    }
     _initializeFavorites();
     _initializeChartData();
   }
@@ -105,6 +123,12 @@ class _CoinDetailScreenState extends State<CoinDetailScreen> {
         content: Text(message),
         duration: Duration(seconds: 2),
         backgroundColor: _isFavorite ? AppColors.kgreen : AppColors.kred,
+        behavior: SnackBarBehavior.floating,
+        margin: EdgeInsets.only(
+          bottom: 16.h, // Position above bottom with padding
+          left: 16.w,
+          right: 16.w,
+        ),
       ),
     );
   }
@@ -272,7 +296,25 @@ class _CoinDetailScreenState extends State<CoinDetailScreen> {
       _errorMessage = '';
     });
 
-    _connectToWebSocket();
+    // Instead of reconnecting, just send a timeframe change message
+    final selectedTimeframe = _timeFrames[_selectedTimeFrame];
+    final apiTimeframe = _getApiTimeframe(selectedTimeframe);
+
+    //print('📡 Changing timeframe to: $apiTimeframe (UI: $selectedTimeframe)');
+    _webSocketService.changeChartTimeframe(apiTimeframe);
+
+    // Set timeout for the new data
+    _timeoutTimer?.cancel();
+    _timeoutTimer = Timer(Duration(seconds: 15), () {
+      if (_isLoading && mounted) {
+        setState(() {
+          _isLoading = false;
+          _hasError = true;
+          _errorMessage = 'Timeout waiting for chart data. Please try again.';
+        });
+        //print('⏰ Timeframe change timeout');
+      }
+    });
   }
 
   void _validateTimeframeData(String timeframe, ChartData chartData) {
@@ -364,6 +406,12 @@ class _CoinDetailScreenState extends State<CoinDetailScreen> {
           SnackBar(
             content: Text('Chart not ready. Please wait for chart to load.'),
             backgroundColor: AppColors.kred,
+            behavior: SnackBarBehavior.floating,
+            margin: EdgeInsets.only(
+              bottom: 16.h,
+              left: 16.w,
+              right: 16.w,
+            ),
           ),
         );
         return;
@@ -399,6 +447,12 @@ class _CoinDetailScreenState extends State<CoinDetailScreen> {
             content: Text('Chart saved to gallery successfully!'),
             backgroundColor: AppColors.kgreen,
             duration: Duration(seconds: 2),
+            behavior: SnackBarBehavior.floating,
+            margin: EdgeInsets.only(
+              bottom: 16.h,
+              left: 16.w,
+              right: 16.w,
+            ),
           ),
         );
       } else {
@@ -411,6 +465,12 @@ class _CoinDetailScreenState extends State<CoinDetailScreen> {
           content: Text('Failed to save chart: ${e.toString()}'),
           backgroundColor: AppColors.kred,
           duration: Duration(seconds: 3),
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.only(
+            bottom: 16.h,
+            left: 16.w,
+            right: 16.w,
+          ),
         ),
       );
     }
@@ -453,30 +513,34 @@ class _CoinDetailScreenState extends State<CoinDetailScreen> {
     return direction == 'UP' || direction == 'HOLD';
   }
 
+  Widget _buildChartShimmer() {
+    return _buildShimmerPlaceholder(
+      height: 120.h,
+      width: double.infinity,
+      borderRadius: BorderRadius.circular(8.r),
+    );
+  }
+
+  Widget _buildShimmerPlaceholder({
+    required double height,
+    required double width,
+    BorderRadius? borderRadius,
+  }) {
+    return _Shimmer(
+      child: Container(
+        height: height,
+        width: width,
+        decoration: BoxDecoration(
+          color: Colors.black,
+          borderRadius: borderRadius ?? BorderRadius.circular(4),
+        ),
+      ),
+    );
+  }
+
   Widget _buildChartWidget() {
     if (_isLoading) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: 20.w,
-              height: 20.h,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation<Color>(AppColors.kprimary),
-              ),
-            ),
-            SizedBox(height: 8.h),
-            Text(
-              'Loading chart data...',
-              style: AppTextStyles.ktwhite12500.copyWith(
-                color: AppColors.kwhite.withValues(alpha: 0.6),
-              ),
-            ),
-          ],
-        ),
-      );
+      return _buildChartShimmer();
     }
 
     if (_hasError) {
@@ -732,41 +796,46 @@ class _CoinDetailScreenState extends State<CoinDetailScreen> {
                   ),
                 ),
               ),
-
               SizedBox(height: 16.h),
+              // Hide timeframe buttons for macro indicators
+              if (!_isMacroIndicator) ...[
 
-              // Time Frame Buttons
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 16.w),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: _timeFrames.asMap().entries.map((entry) {
-                    int index = entry.key;
-                    String timeFrame = entry.value;
-                    bool isSelected = _selectedTimeFrame == index;
 
-                    return GestureDetector(
-                      onTap: () => _onTimeFrameChanged(index),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
-                        decoration: BoxDecoration(
-                          color: isSelected ? AppColors.kprimary : Colors.transparent,
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                        child: Text(
-                          timeFrame,
-                          style: AppTextStyles.ktwhite14500.copyWith(
-                            color: isSelected ? AppColors.kwhite : AppColors.kwhite,
-                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                // Time Frame Buttons
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 16.w),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: _availableTimeFrames.asMap().entries.map((entry) {
+                      int displayIndex = entry.key;
+                      String timeFrame = entry.value;
+                      // Get the actual index in the full timeFrames list
+                      int actualIndex = _timeFrames.indexOf(timeFrame);
+                      bool isSelected = _selectedTimeFrame == actualIndex;
+
+                      return GestureDetector(
+                        onTap: () => _onTimeFrameChanged(actualIndex),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                          decoration: BoxDecoration(
+                            color: isSelected ? AppColors.kprimary : Colors.transparent,
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                          child: Text(
+                            timeFrame,
+                            style: AppTextStyles.ktwhite14500.copyWith(
+                              color: isSelected ? AppColors.kwhite : AppColors.kwhite,
+                              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                            ),
                           ),
                         ),
-                      ),
-                    );
-                  }).toList(),
+                      );
+                    }).toList(),
+                  ),
                 ),
-              ),
 
-              SizedBox(height: 16.h),
+                SizedBox(height: 16.h),
+              ],
 
               // Save and Refresh Buttons
               Container(
@@ -1022,6 +1091,7 @@ class ChartPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     //print('Painting chart: pastPrices=${chartData.pastPrices.length}, futurePrices=${chartData.futurePrices.length}');
 
+
     // Past data (grey line)
     final pastPaint = Paint()
       ..color = Colors.grey.withValues(alpha: 0.6)
@@ -1040,12 +1110,13 @@ class ChartPainter extends CustomPainter {
     final allPrices = [...chartData.pastPrices, ...chartData.futurePrices];
     final minPrice = allPrices.isEmpty ? 0.0 : allPrices.reduce((a, b) => a < b ? a : b);
     final maxPrice = allPrices.isEmpty ? 100.0 : allPrices.reduce((a, b) => a > b ? a : b);
-    final priceRange = maxPrice - minPrice;
+    var priceRange = maxPrice - minPrice;
 
-    // Avoid division by zero
+    // Handle flat lines (stablecoins where all values are the same)
+    // Add small padding to prevent division by zero
     if (priceRange == 0) {
-      //print('Price range is zero, skipping chart rendering');
-      return;
+      priceRange = maxPrice * 0.001; // 0.1% of the price as range
+      if (priceRange == 0) priceRange = 0.01; // Fallback for zero price
     }
 
     // Create paths for past and future data
@@ -1232,8 +1303,6 @@ class ChartPainter extends CustomPainter {
     return canvasHeight - ((price - minPrice) / priceRange) * canvasHeight;
   }
 
-
-
   // Format price for short display on chart
   String _formatPriceShort(double price) {
     if (price >= 1000000) {
@@ -1247,13 +1316,73 @@ class ChartPainter extends CustomPainter {
     }
   }
 
-
-
-
-
-
-
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => true;
 }
 
+class _Shimmer extends StatefulWidget {
+  const _Shimmer({
+    required this.child,
+  });
+
+  final Widget child;
+
+  @override
+  State<_Shimmer> createState() => _ShimmerState();
+}
+
+class _ShimmerState extends State<_Shimmer> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return ShaderMask(
+          shaderCallback: (bounds) {
+            return LinearGradient(
+              transform: _SlidingGradientTransform(slidePercent: _controller.value),
+              colors: const [
+                Color(0xFF3A3A3A),
+                Color(0xFF4A4A4A),
+                Color(0xFF3A3A3A),
+              ],
+              stops: const [0.4, 0.5, 0.6],
+            ).createShader(bounds);
+          },
+          blendMode: BlendMode.srcATop,
+          child: widget.child,
+        );
+      },
+    );
+  }
+}
+
+class _SlidingGradientTransform extends GradientTransform {
+  const _SlidingGradientTransform({
+    required this.slidePercent,
+  });
+
+  final double slidePercent;
+
+  @override
+  Matrix4? transform(Rect bounds, {TextDirection? textDirection}) {
+    return Matrix4.translationValues(bounds.width * slidePercent, 0.0, 0.0);
+  }
+}
