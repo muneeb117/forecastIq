@@ -262,6 +262,7 @@ class AuthService extends GetxController {
       );
       return null;
     } catch (e) {
+      print(e);
       MessageHelper.showError(
         'Apple Sign-in failed: $e',
       );
