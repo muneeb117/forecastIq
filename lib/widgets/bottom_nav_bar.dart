@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -34,9 +35,17 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _screens[_currentIndex],
-      backgroundColor: AppColors.kscoffald,
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarBrightness: Brightness.dark, // iOS: white icons
+        statusBarIconBrightness: Brightness.light, // Android: white icons
+        systemNavigationBarColor: AppColors.ksecondary,
+        systemNavigationBarIconBrightness: Brightness.light,
+      ),
+      child: Scaffold(
+        body: _screens[_currentIndex],
+        backgroundColor: AppColors.kscoffald,
       floatingActionButton: Container(
         margin: EdgeInsets.only(
           left: 16.w,
@@ -84,6 +93,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      ),
     );
   }
 
