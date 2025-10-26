@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'dart:async';
 import 'package:get/get.dart';
@@ -39,9 +40,17 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body:
-      SafeArea(child: Column(
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarBrightness: Brightness.dark, // iOS: white icons
+        statusBarIconBrightness: Brightness.light, // Android: white icons
+        systemNavigationBarColor: AppColors.ksecondary,
+        systemNavigationBarIconBrightness: Brightness.light,
+      ),
+      child: Scaffold(
+        body:
+        SafeArea(child: Column(
         children: [
           Expanded(
             child: Center(
@@ -101,6 +110,7 @@ class _SplashScreenState extends State<SplashScreen> {
         ],
       ),
       )
+      ),
     );
   }
 }
