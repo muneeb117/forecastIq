@@ -23,14 +23,14 @@ class _OnBoardingState extends State<OnBoardingScreen> {
   final List<OnboardingModel> _onboardingData = [
     OnboardingModel(
       image: AppImages.onboarding1,
-      title: "Praidux use lorem ipsem text as dummy text",
-      description: "Lorem ipsem is a dummy text",
+      title: "AI-Powered Market Forecasts",
+      description: "Real-time predictions for crypto, stocks, and market trends",
       showOverlay: false,
     ),
     OnboardingModel(
       image: AppImages.onboarding2,
-      title: "Praidux use lorem ipsem text as dummy text",
-      description: "Lorem ipsem is a dummy text",
+      title: "Track Accuracy & Make Better Decisions",
+      description: "Analyze trends, track accuracy, invest smarter",
       showOverlay: true,
     ),
   ];
@@ -45,39 +45,14 @@ class _OnBoardingState extends State<OnBoardingScreen> {
         value: SystemUiOverlayStyle(
           systemNavigationBarDividerColor: Colors.transparent,
           systemNavigationBarColor: AppColors.ksecondary,
-          statusBarColor: AppColors.ksecondary,
-          statusBarBrightness: Brightness.light,
-          statusBarIconBrightness: Brightness.light,
+          statusBarColor: Colors.transparent, // Transparent status bar
+          statusBarBrightness: Brightness.dark, // iOS: white icons
+          statusBarIconBrightness: Brightness.light, // Android: white icons
           systemNavigationBarIconBrightness: Brightness.light,
         ),
         child: SafeArea(
         child: Stack(
           children: [
-            // Skip button at top
-
-            Positioned(
-              top: 16.h,
-              right: 16.w,
-              child: Container(
-                width: 61.w,
-                height: 28.h,
-                child: TextButton(
-                  onPressed: () => _skipOnboarding(),
-                  style: TextButton.styleFrom(
-                    backgroundColor: AppColors.kwhite,
-                    alignment: Alignment.center,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.r),
-                    ),
-                  ),
-                  child: Text(
-                    "Skip",
-                    style: AppTextStyles.ksblack12600,
-                  ),
-                ),
-              ),
-            ),
-
             // Main PageView content (full screen)
             PageView.builder(
               physics: NeverScrollableScrollPhysics(),
@@ -149,6 +124,34 @@ class _OnBoardingState extends State<OnBoardingScreen> {
                     ),
                     SizedBox(height: 20.h),
                   ],
+                ),
+              ),
+            ),
+
+            // Skip button - positioned LAST so it appears on top
+            Positioned(
+              top: 16.h,
+              right: 16.w,
+              child: GestureDetector(
+                onTap: () {
+                  print('Skip tapped');
+                  _skipOnboarding();
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 8.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.kwhite,
+                    borderRadius: BorderRadius.circular(20.r),
+                  ),
+                  child: Text(
+                    "Skip",
+                    style: AppTextStyles.ksblack12600.copyWith(
+                      fontSize: 10.sp,
+                    ),
+                  ),
                 ),
               ),
             ),
