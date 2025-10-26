@@ -427,6 +427,19 @@ class WebSocketService {
     });
   }
 
+  /// Change timeframe for chart connection without reconnecting
+  void changeChartTimeframe(String timeframe) {
+    if (_isConnected && _channel != null) {
+      //print('📡 Sending timeframe change message: $timeframe');
+      sendMessage({
+        'type': 'change_timeframe',
+        'timeframe': timeframe,
+      });
+    } else {
+      //print('⚠️ Cannot change timeframe: WebSocket not connected');
+    }
+  }
+
   Future<void> connectToAssetChart(String symbol, {String timeframe = '7D'}) async {
     await _disconnect();
 
