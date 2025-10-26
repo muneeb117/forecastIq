@@ -126,7 +126,7 @@ class AssetHelper {
       width: width ?? 20.w,
       height: height ?? 20.h,
       decoration: BoxDecoration(
-        color: Colors.grey.withValues(alpha: 0.3),
+        color: const Color(0x4D9E9E9E), // Colors.grey with 30% opacity
         borderRadius: BorderRadius.circular(4.r),
       ),
       child: Center(
