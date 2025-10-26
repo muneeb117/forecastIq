@@ -180,6 +180,7 @@ class NotificationService extends GetxController {
     String? payload,
     int? id,
     String? type,
+    bool showConfirmation = false, // Only show confirmation if explicitly requested
   }) async {
     final notificationId = id ?? Random().nextInt(1000000);
     final scheduledTime = DateTime.now().add(delay);
@@ -244,10 +245,84 @@ class NotificationService extends GetxController {
       );
     }
 
-    MessageHelper.showInfo(
-      'You will receive a notification in ${_formatDuration(delay)}',
-      title: 'Notification Scheduled',
-    );
+    // Only show confirmation message if explicitly requested
+    if (showConfirmation) {
+      MessageHelper.showInfo(
+        'You will receive a notification in ${_formatDuration(delay)}',
+        title: 'Notification Scheduled',
+      );
+    }
+  }
+
+  // Schedule multiple notifications at once
+  Future<void> scheduleMultipleNotifications({
+    required List<Map<String, dynamic>> notificationConfigs,
+  }) async {
+    for (var config in notificationConfigs) {
+      final notificationId = config['id'] ?? Random().nextInt(1000000);
+      final delay = config['delay'] as Duration;
+      final title = config['title'] as String;
+      final body = config['body'] as String;
+      final payload = config['payload'] as String?;
+      final type = config['type'] as String?;
+
+      final scheduledTime = DateTime.now().add(delay);
+
+      final scheduledNotif = ScheduledNotification(
+        id: notificationId,
+        title: title,
+        body: body,
+        scheduledTime: scheduledTime,
+        payload: payload,
+        type: type ?? 'general',
+      );
+
+      scheduledNotifications.add(scheduledNotif);
+
+      if (delay.inMinutes < 15) {
+        Timer(delay, () async {
+          String? coinSymbol;
+          String? coinImage;
+          if (payload != null) {
+            try {
+              final data = jsonDecode(payload);
+              coinSymbol = data['asset'] as String?;
+              coinImage = _getCoinImage(coinSymbol);
+            } catch (e) {
+              //print('Error parsing payload for coin info: $e');
+            }
+          }
+
+          await showNotification(
+            title: title,
+            body: body,
+            payload: payload,
+            id: notificationId,
+            coinSymbol: coinSymbol,
+            coinImage: coinImage,
+            type: type,
+          );
+
+          scheduledNotifications.removeWhere((n) => n.id == notificationId);
+          await saveScheduledNotifications();
+        });
+      } else {
+        await Workmanager().registerOneOffTask(
+          'notification_$notificationId',
+          'showScheduledNotification',
+          initialDelay: delay,
+          inputData: {
+            'id': notificationId,
+            'title': title,
+            'body': body,
+            'payload': payload ?? '',
+            'type': type ?? 'general',
+          },
+        );
+      }
+    }
+
+    await saveScheduledNotifications();
   }
 
   // Cancel scheduled notification
@@ -790,6 +865,16 @@ void callbackDispatcher() {
 Future<void> _showWorkManagerNotification(Map<String, dynamic> data) async {
   final notifications = FlutterLocalNotificationsPlugin();
 
+  // Initialize notification plugin for background task
+  const AndroidInitializationSettings androidSettings =
+      AndroidInitializationSettings('@mipmap/ic_launcher');
+
+  const InitializationSettings initSettings = InitializationSettings(
+    android: androidSettings,
+  );
+
+  await notifications.initialize(initSettings);
+
   const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
     'forecast_channel',
     'Forecast Notifications',
@@ -797,6 +882,9 @@ Future<void> _showWorkManagerNotification(Map<String, dynamic> data) async {
     importance: Importance.high,
     priority: Priority.high,
     showWhen: true,
+    playSound: true,
+    enableVibration: true,
+    icon: '@mipmap/ic_launcher',
   );
 
   const NotificationDetails details = NotificationDetails(android: androidDetails);
@@ -814,6 +902,16 @@ Future<void> _showWorkManagerNotification(Map<String, dynamic> data) async {
 Future<void> _showDailyReminderNotification(Map<String, dynamic> data) async {
   final notifications = FlutterLocalNotificationsPlugin();
 
+  // Initialize notification plugin for background task
+  const AndroidInitializationSettings androidSettings =
+      AndroidInitializationSettings('@mipmap/ic_launcher');
+
+  const InitializationSettings initSettings = InitializationSettings(
+    android: androidSettings,
+  );
+
+  await notifications.initialize(initSettings);
+
   const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
     'daily_reminder_channel',
     'Daily Reminders',
@@ -821,6 +919,9 @@ Future<void> _showDailyReminderNotification(Map<String, dynamic> data) async {
     importance: Importance.high,
     priority: Priority.high,
     showWhen: true,
+    playSound: true,
+    enableVibration: true,
+    icon: '@mipmap/ic_launcher',
   );
 
   const NotificationDetails details = NotificationDetails(android: androidDetails);
