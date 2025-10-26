@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'view/splash/splash_screen.dart';
 import '../core/constants/colors.dart';
@@ -18,17 +19,22 @@ void main() async {
   );
 
 
-  //  SystemChrome.setSystemUIOverlayStyle(
-  //   const SystemUiOverlayStyle(
-  //     systemNavigationBarDividerColor: AppColors.kscoffald,
-  //     systemNavigationBarColor: AppColors.kscoffald,
-  //     statusBarColor: AppColors.kscoffald,
-  //     statusBarBrightness: Brightness.light,
-  //     systemStatusBarContrastEnforced: true,
-  //     statusBarIconBrightness: Brightness.light,
-  //     systemNavigationBarIconBrightness: Brightness.light,
-  //   ),
-  // );
+   SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      systemNavigationBarDividerColor: Colors.transparent,
+      systemNavigationBarColor: AppColors.ksecondary,
+      statusBarColor: Colors.transparent, // Transparent status bar
+      statusBarBrightness: Brightness.dark, // iOS: dark = white icons
+      statusBarIconBrightness: Brightness.light, // Android: light = white icons
+      systemNavigationBarIconBrightness: Brightness.light,
+    ),
+  );
+
+  // Also set preferred orientations
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
 
   runApp(const MyApp());
 }
@@ -51,6 +57,15 @@ class MyApp extends StatelessWidget {
               fontFamily: "SfProDisplay",
               primaryColor: AppColors.kprimary,
               scaffoldBackgroundColor: AppColors.kscoffald,
+              appBarTheme: AppBarTheme(
+                systemOverlayStyle: SystemUiOverlayStyle(
+                  statusBarColor: Colors.transparent,
+                  statusBarBrightness: Brightness.dark, // iOS: white icons
+                  statusBarIconBrightness: Brightness.light, // Android: white icons
+                  systemNavigationBarColor: AppColors.ksecondary,
+                  systemNavigationBarIconBrightness: Brightness.light,
+                ),
+              ),
             ),
             home: SplashScreen(),
           );
