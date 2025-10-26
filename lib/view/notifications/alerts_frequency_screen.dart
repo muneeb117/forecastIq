@@ -29,6 +29,7 @@ class _AlertsFrequencyScreenState extends State<AlertsFrequencyScreen> {
   List<AssetData> _searchResults = [];
   Timer? _debounceTimer;
   Timer? _snackbarDebounceTimer;
+  bool _isUpdatingText = false;
 
   // Keys for SharedPreferences
   static const String _alertFrequencyKey = 'daily_alerts_frequency';
@@ -130,13 +131,7 @@ class _AlertsFrequencyScreenState extends State<AlertsFrequencyScreen> {
 
     final query = _searchController.text.toLowerCase();
     setState(() {
-      // If user has selected assets, show only those in search results when search is empty
-      // Otherwise, filter from all assets based on search query
-      final searchPool = _selectedAssetsService.hasSelectedAssets && query.isEmpty
-          ? _selectedAssetsService.selectedAssets
-          : _allAssets;
-
-      _searchResults = searchPool.where((asset) {
+      _searchResults = _allAssets.where((asset) {
         return asset.symbol.toLowerCase().contains(query) ||
                asset.name.toLowerCase().contains(query) ||
                asset.category.toLowerCase().contains(query);
@@ -218,23 +213,43 @@ class _AlertsFrequencyScreenState extends State<AlertsFrequencyScreen> {
                                 textAlign: TextAlign.center,
                                 cursorColor: AppColors.kwhite,
                                 onChanged: (value) {
+                                  // Prevent recursive calls when we're updating the text programmatically
+                                  if (_isUpdatingText) return;
+
                                   // Cancel previous timers
                                   _debounceTimer?.cancel();
                                   _snackbarDebounceTimer?.cancel();
 
                                   final alertCount = int.tryParse(value) ?? 0;
 
+                                  // Validate maximum limit of 2400
+                                  if (alertCount > 2400) {
+                                    _isUpdatingText = true;
+
+                                    // Use post frame callback to safely update the text after current frame
+                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      if (mounted) {
+                                        _dailyAlertsController.text = '2400';
+                                        _dailyAlertsController.selection = TextSelection.fromPosition(
+                                          TextPosition(offset: _dailyAlertsController.text.length),
+                                        );
+                                        _isUpdatingText = false;
+                                      }
+                                    });
+
+                                    MessageHelper.showWarning(
+                                      'Maximum alert frequency is 2400',
+                                      title: '⚠️ Limit Reached',
+                                    );
+                                    return;
+                                  }
+
                                   // Save the value immediately for persistence
                                   if (alertCount > 0) {
                                     _saveSettings(alertCount, _selectedFrequency);
                                   }
 
-                                  // Set timer for showing frequency info after user stops typing
-                                  _snackbarDebounceTimer = Timer(const Duration(milliseconds: 800), () {
-                                    if (alertCount > 0) {
-                                      _showFrequencyInfo();
-                                    }
-                                  });
+                                  // No need to show frequency info - removed to avoid multiple alerts
 
                                   // Set timer to update alerts after user stops typing
                                   _debounceTimer = Timer(const Duration(milliseconds: 1500), () {
@@ -245,7 +260,21 @@ class _AlertsFrequencyScreenState extends State<AlertsFrequencyScreen> {
                                 },
                                 onSubmitted: (value) {
                                   // Update alerts when user finishes typing (presses enter)
-                                  final alertCount = int.tryParse(value) ?? 0;
+                                  var alertCount = int.tryParse(value) ?? 0;
+
+                                  // Validate maximum limit of 2400
+                                  if (alertCount > 2400) {
+                                    alertCount = 2400;
+                                    _dailyAlertsController.text = '2400';
+                                    _dailyAlertsController.selection = TextSelection.fromPosition(
+                                      TextPosition(offset: _dailyAlertsController.text.length),
+                                    );
+                                    MessageHelper.showWarning(
+                                      'Maximum alert frequency is 2400',
+                                      title: '⚠️ Limit Reached',
+                                    );
+                                  }
+
                                   if (alertCount > 0) {
                                     _saveSettings(alertCount, _selectedFrequency);
                                     _updateAlertsForAllSelectedAssets();
@@ -390,9 +419,9 @@ class _AlertsFrequencyScreenState extends State<AlertsFrequencyScreen> {
         // Save the frequency type
         final alertCount = int.tryParse(_dailyAlertsController.text) ?? 0;
         _saveSettings(alertCount, frequency);
-        // Only show frequency info if there's a value
-        if (alertCount > 0) {
-          _showFrequencyInfo();
+        // Update alerts silently without showing individual time notifications
+        if (alertCount > 0 && _selectedAssetsService.selectedAssets.isNotEmpty) {
+          _updateAlertsForAllSelectedAssets();
         }
       },
       child: Container(
@@ -582,151 +611,116 @@ class _AlertsFrequencyScreenState extends State<AlertsFrequencyScreen> {
       // Automatically setup alerts for this asset
       _setupAlertForAsset(asset);
 
+      // Show simple success message without time details
       MessageHelper.showSuccess(
-        '${asset.symbol} added and alerts setup automatically',
+        '${asset.symbol} added successfully',
         title: 'Asset Added',
       );
     }
   }
 
-  void _showFrequencyInfo() {
-    final alertCount = int.tryParse(_dailyAlertsController.text) ?? 0;
-    if (alertCount == 0) return;
+  List<Map<String, dynamic>> _getDailyAlertsConfigs(AssetData asset, int alertCount) {
+    if (alertCount <= 0) return [];
 
-    String message = '';
-    String title = '';
-    switch (_selectedFrequency) {
-      case 'Daily':
-        final intervalHours = 24 / alertCount;
-        title = '📊 Daily Alert Schedule';
-        message = '$alertCount alerts today, every ${intervalHours.toStringAsFixed(1)} hours';
-        break;
-      case 'Weekly':
-        final intervalHours = (7 * 24) / alertCount;
-        title = '📈 Weekly Alert Schedule';
-        message = '$alertCount alerts this week, every ${intervalHours.toStringAsFixed(1)} hours';
-        break;
-      case 'Real Time':
-        final intervalHours = 24 / alertCount;
-        title = '⚡ Real-time Alert Schedule';
-        message = '$alertCount real-time alerts today, every ${intervalHours.toStringAsFixed(1)} hours';
-        break;
-    }
-
-    if (message.isNotEmpty) {
-      MessageHelper.showInfo(
-        message,
-        title: title,
-        duration: const Duration(seconds: 3),
-      );
-    }
-  }
-
-
-  void _scheduleDailyAlerts(AssetData asset, int alertCount) {
-    if (alertCount <= 0) return;
-
-    // Calculate interval between alerts for the day
-    final intervalMinutes = (24 * 60) / alertCount; // Total minutes in day divided by alert count
+    final intervalMinutes = (24 * 60) / alertCount;
+    final List<Map<String, dynamic>> configs = [];
 
     for (int i = 0; i < alertCount; i++) {
       final delayMinutes = intervalMinutes * i;
       final delay = Duration(minutes: delayMinutes.round());
-
       final alertNumber = i + 1;
 
-      _notificationService.scheduleNotification(
-        title: '📈 ${asset.symbol} Alert ($alertNumber/$alertCount)',
-        body: '${asset.name} daily update - Check the latest price and trends! Alert $alertNumber of $alertCount today.',
-        delay: delay,
-        type: 'daily_asset_alert',
-        payload: jsonEncode({
+      configs.add({
+        'title': '📈 ${asset.symbol} Alert ($alertNumber/$alertCount)',
+        'body': '${asset.name} daily update - Check the latest price and trends! Alert $alertNumber of $alertCount today.',
+        'delay': delay,
+        'type': 'daily_asset_alert',
+        'payload': jsonEncode({
           'asset': asset.symbol,
           'alertNumber': alertNumber,
           'totalAlerts': alertCount,
           'frequency': 'daily'
         }),
-      );
+      });
     }
-
-    //print('✅ Scheduled $alertCount daily alerts for ${asset.symbol} - Every ${(intervalMinutes/60).toStringAsFixed(1)} hours');
+    return configs;
   }
 
-  void _scheduleWeeklyAlerts(AssetData asset, int alertCount) {
-    if (alertCount <= 0) return;
+  List<Map<String, dynamic>> _getWeeklyAlertsConfigs(AssetData asset, int alertCount) {
+    if (alertCount <= 0) return [];
 
-    // Calculate interval between alerts for the week (7 days)
-    final intervalMinutes = (7 * 24 * 60) / alertCount; // Total minutes in week divided by alert count
+    final intervalMinutes = (7 * 24 * 60) / alertCount;
+    final List<Map<String, dynamic>> configs = [];
 
     for (int i = 0; i < alertCount; i++) {
       final delayMinutes = intervalMinutes * i;
       final delay = Duration(minutes: delayMinutes.round());
-
       final alertNumber = i + 1;
       final dayOfWeek = (delayMinutes / (24 * 60)).floor() + 1;
 
-      _notificationService.scheduleNotification(
-        title: '📊 ${asset.symbol} Weekly Alert ($alertNumber/$alertCount)',
-        body: '${asset.name} weekly update - Day $dayOfWeek analysis. Alert $alertNumber of $alertCount this week.',
-        delay: delay,
-        type: 'weekly_asset_alert',
-        payload: jsonEncode({
+      configs.add({
+        'title': '📊 ${asset.symbol} Weekly Alert ($alertNumber/$alertCount)',
+        'body': '${asset.name} weekly update - Day $dayOfWeek analysis. Alert $alertNumber of $alertCount this week.',
+        'delay': delay,
+        'type': 'weekly_asset_alert',
+        'payload': jsonEncode({
           'asset': asset.symbol,
           'alertNumber': alertNumber,
           'totalAlerts': alertCount,
           'frequency': 'weekly',
           'dayOfWeek': dayOfWeek
         }),
-      );
+      });
     }
-
-    //print('✅ Scheduled $alertCount weekly alerts for ${asset.symbol} - Every ${(intervalMinutes/60).toStringAsFixed(1)} hours over 7 days');
+    return configs;
   }
 
-  void _scheduleRealTimeAlerts(AssetData asset, int alertCount) {
-    if (alertCount <= 0) return;
+  List<Map<String, dynamic>> _getRealTimeAlertsConfigs(AssetData asset, int alertCount) {
+    if (alertCount <= 0) return [];
 
-    // Real-time means we distribute the alerts throughout the day
-    // Similar to daily but with more frequent updates
-    final intervalMinutes = (24 * 60) / alertCount; // Total minutes in day divided by alert count
+    final intervalMinutes = (24 * 60) / alertCount;
+    final List<Map<String, dynamic>> configs = [];
 
     for (int i = 0; i < alertCount; i++) {
       final delayMinutes = intervalMinutes * i;
       final delay = Duration(minutes: delayMinutes.round());
-
       final alertNumber = i + 1;
 
-      _notificationService.scheduleNotification(
-        title: '⚡ ${asset.symbol} Real-time ($alertNumber/$alertCount)',
-        body: '${asset.name} real-time update - Live market analysis! Alert $alertNumber of $alertCount today.',
-        delay: delay,
-        type: 'realtime_asset_alert',
-        payload: jsonEncode({
+      configs.add({
+        'title': '⚡ ${asset.symbol} Real-time ($alertNumber/$alertCount)',
+        'body': '${asset.name} real-time update - Live market analysis! Alert $alertNumber of $alertCount today.',
+        'delay': delay,
+        'type': 'realtime_asset_alert',
+        'payload': jsonEncode({
           'asset': asset.symbol,
           'alertNumber': alertNumber,
           'totalAlerts': alertCount,
           'frequency': 'realtime'
         }),
-      );
+      });
     }
-
-    //print('✅ Scheduled $alertCount real-time alerts for ${asset.symbol} - Every ${(intervalMinutes/60).toStringAsFixed(1)} hours');
+    return configs;
   }
 
   void _setupAlertForAsset(AssetData asset) {
     final alertCount = int.tryParse(_dailyAlertsController.text) ?? 0;
-    if (alertCount <= 0) return; // Don't setup alerts if no frequency is set
+    if (alertCount <= 0) return;
 
+    List<Map<String, dynamic>> configs = [];
     switch (_selectedFrequency) {
       case 'Daily':
-        _scheduleDailyAlerts(asset, alertCount);
+        configs = _getDailyAlertsConfigs(asset, alertCount);
         break;
       case 'Weekly':
-        _scheduleWeeklyAlerts(asset, alertCount);
+        configs = _getWeeklyAlertsConfigs(asset, alertCount);
         break;
       case 'Real Time':
-        _scheduleRealTimeAlerts(asset, alertCount);
+        configs = _getRealTimeAlertsConfigs(asset, alertCount);
         break;
+    }
+
+    if (configs.isNotEmpty) {
+      _notificationService.scheduleMultipleNotifications(notificationConfigs: configs);
     }
   }
 
@@ -737,26 +731,43 @@ class _AlertsFrequencyScreenState extends State<AlertsFrequencyScreen> {
     _notificationService.clearAllNotifications();
 
     // Reschedule alerts for remaining assets
-    for (final remainingAsset in _selectedAssetsService.selectedAssets) {
-      if (remainingAsset != asset) {
-        _setupAlertForAsset(remainingAsset);
-      }
-    }
+    _updateAlertsForAllSelectedAssets();
   }
 
   void _updateAlertsForAllSelectedAssets() {
     // Clear all current notifications
     _notificationService.clearAllNotifications();
 
-    // Reschedule alerts for all selected assets with new frequency/count
-    for (final asset in _selectedAssetsService.selectedAssets) {
-      _setupAlertForAsset(asset);
+    final alertCount = int.tryParse(_dailyAlertsController.text) ?? 0;
+    if (alertCount <= 0) {
+      return;
     }
 
-    final alertCount = int.tryParse(_dailyAlertsController.text) ?? 0;
+    final List<Map<String, dynamic>> allNotificationConfigs = [];
+
+    // Prepare configs for all selected assets
+    for (final asset in _selectedAssetsService.selectedAssets) {
+      switch (_selectedFrequency) {
+        case 'Daily':
+          allNotificationConfigs.addAll(_getDailyAlertsConfigs(asset, alertCount));
+          break;
+        case 'Weekly':
+          allNotificationConfigs.addAll(_getWeeklyAlertsConfigs(asset, alertCount));
+          break;
+        case 'Real Time':
+          allNotificationConfigs.addAll(_getRealTimeAlertsConfigs(asset, alertCount));
+          break;
+      }
+    }
+
+    // Schedule all notifications at once
+    if (allNotificationConfigs.isNotEmpty) {
+      _notificationService.scheduleMultipleNotifications(notificationConfigs: allNotificationConfigs);
+    }
+
     final selectedCount = _selectedAssetsService.selectedAssets.length;
 
-    if (selectedCount > 0 && alertCount > 0) {
+    if (selectedCount > 0) {
       MessageHelper.showSuccess(
         'Updated $selectedCount assets with $_selectedFrequency frequency ($alertCount alerts each)',
         title: '🔄 Alerts Updated',
@@ -764,5 +775,4 @@ class _AlertsFrequencyScreenState extends State<AlertsFrequencyScreen> {
       );
     }
   }
-
 }
