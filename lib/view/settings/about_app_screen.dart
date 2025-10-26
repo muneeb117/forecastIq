@@ -14,161 +14,314 @@ class AboutApp extends StatefulWidget {
 }
 
 class _AboutAppState extends State<AboutApp> {
-
-
-  TextEditingController _searchController = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.kscoffald,
       body: SafeArea(
-        child: SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        child: Column(
+          children: [
+            // Header
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Header
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                          onTap: () => Navigator.pop(context),
-                          child: SvgPicture.asset(
-                            AppImages.left,
-                            width: 24.w,
-                            height: 24.h,
-                          )
-                      ),
-
-                      Text(
-                          'About App',
-                          style: AppTextStyles.ktwhite16500
-                      ),
-                      SizedBox()
-                    ],
-                  ),
-                  22.verticalSpace,
-                  Container(
-                    height: 54.h,
-                    decoration: BoxDecoration(
-                      color: AppColors.ktertiary,
-                      borderRadius: BorderRadius.circular(8.r),
+                  GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: SvgPicture.asset(
+                      AppImages.left,
+                      width: 24.w,
+                      height: 24.h,
                     ),
-                    child: TextField(
-                      controller: _searchController,
-                      style: AppTextStyles.kblack14500.copyWith(
+                  ),
+                  Text('About App', style: AppTextStyles.ktwhite16500),
+                  SizedBox(width: 24.w),
+                ],
+              ),
+            ),
+            22.verticalSpace,
+
+            // Content
+            Expanded(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    32.verticalSpace,
+
+                    // App Logo/Icon
+                    Container(
+                      width: 100.w,
+                      height: 100.h,
+                      decoration: BoxDecoration(
+                        color: AppColors.kprimary,
+                        borderRadius: BorderRadius.circular(24.r),
+                      ),
+                      child: Center(
+                        child: Icon(
+                          Icons.trending_up,
+                          size: 60.r,
+                          color: AppColors.kwhite,
+                        ),
+                      ),
+                    ),
+                    24.verticalSpace,
+
+                    // App Name
+                    Text(
+                      'ForcastIQ',
+                      style: AppTextStyles.kwhite32700.copyWith(
                         color: AppColors.kwhite,
+                        fontSize: 28.sp,
                       ),
-                      textAlignVertical:
-                      TextAlignVertical.center, // Center text vertically
-                      decoration: InputDecoration(
-                        hintText: 'Search ...',
-                        hintStyle: AppTextStyles.kblack14500.copyWith(
-                          color: AppColors.kwhite2,
+                    ),
+                    8.verticalSpace,
+
+                    // Tagline
+                    Text(
+                      'Smarter predictions. Better decisions.',
+                      style: AppTextStyles.kblack14500.copyWith(
+                        color: AppColors.kwhite2,
+                        fontSize: 14.sp,
+                      ),
+                    ),
+                    8.verticalSpace,
+
+                    // Version
+                    Text(
+                      'Version 1.0.0',
+                      style: AppTextStyles.kblack12500.copyWith(
+                        color: AppColors.kwhite2,
+                      ),
+                    ),
+                    40.verticalSpace,
+
+                    // About Section
+                    _buildInfoCard(
+                      icon: Icons.info_outline,
+                      title: 'About ForcastIQ',
+                      content: 'ForcastIQ is an advanced AI-powered trading forecast application that provides real-time market predictions for cryptocurrencies, stocks, and macroeconomic indicators. Our cutting-edge algorithms analyze vast amounts of market data to deliver accurate forecasts and help you make informed investment decisions.',
+                    ),
+
+                    16.verticalSpace,
+
+                    // Mission Section
+                    _buildInfoCard(
+                      icon: Icons.flag_outlined,
+                      title: 'Our Mission',
+                      content: 'To democratize access to professional-grade market intelligence and empower everyone to make smarter investment decisions through AI-driven insights.',
+                    ),
+
+                    16.verticalSpace,
+
+                    // Features Section
+                    _buildInfoCard(
+                      icon: Icons.stars_outlined,
+                      title: 'Key Features',
+                      content: '• AI-Powered Forecasts\n• Real-Time Market Data\n• Historical Trend Analysis\n• Multi-Asset Support (Crypto, Stocks, Macro)\n• Accuracy Tracking\n• Customizable Notifications\n• Favorites Management\n• Data Export (CSV)',
+                    ),
+
+                    16.verticalSpace,
+
+                    // Supported Assets
+                    _buildInfoCard(
+                      icon: Icons.account_balance_wallet_outlined,
+                      title: 'Supported Assets',
+                      content: '10 Cryptocurrencies: BTC, ETH, USDT, XRP, BNB, SOL, USDC, DOGE, ADA, TRX\n\n10 Stocks: NVDA, MSFT, AAPL, GOOGL, AMZN, META, AVGO, TSLA, BRK-B, JPM\n\n5 Macro Indicators: GDP, CPI, UNEMPLOYMENT, FED_RATE, CONSUMER_CONFIDENCE',
+                    ),
+
+                    16.verticalSpace,
+
+                    // Technology Stack
+                    _buildInfoCard(
+                      icon: Icons.code_outlined,
+                      title: 'Technology',
+                      content: 'Built with Flutter for seamless cross-platform performance. Powered by advanced machine learning models and real-time WebSocket connections for instant market updates.',
+                    ),
+
+                    16.verticalSpace,
+
+                    // Disclaimer
+                    Container(
+                      padding: EdgeInsets.all(16.w),
+                      decoration: BoxDecoration(
+                        color: AppColors.ktertiary,
+                        borderRadius: BorderRadius.circular(12.r),
+                        border: Border.all(
+                          color: Colors.orange.withValues(alpha: 0.3),
+                          width: 1,
                         ),
-                        prefixIcon: Padding(
-                          padding: EdgeInsets.only(
-                            left: 20.w,
-                            right: 12.w,
-                          ), // Adjust icon padding
-                          child: SvgPicture.asset(
-                            AppImages.search,
-                            width: 18.w,
-                            height: 18.h,
-                            colorFilter: ColorFilter.mode(
-                            AppColors.kwhite, BlendMode.srcIn), // Ensure icon color matches text
-                            fit: BoxFit.contain, // Ensure proper scaling
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.warning_amber_outlined,
+                                color: Colors.orange,
+                                size: 20.r,
+                              ),
+                              8.horizontalSpace,
+                              Text(
+                                'Important Disclaimer',
+                                style: AppTextStyles.kwhite16700.copyWith(
+                                  color: Colors.orange,
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                        prefixIconConstraints: BoxConstraints(
-                          minWidth: 18.w,
-                          minHeight: 18.h,
-                        ),
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(
-                          vertical: 16.h, // Adjust vertical padding for centering
-                        ),
-                      ),
-                    ),
-                  ),
-                  32.verticalSpace,
-                  Row(
-                    children: [
-                      SvgPicture.asset(AppImages.question,
-                        width: 24.w,
-                        height: 24.h,
-                      ),
-                      12.horizontalSpace,
-                      Text("General Information",
-                        style: AppTextStyles.kwhite16700,
-                      )
-                    ],
-                  ),
-                  10.verticalSpace,
-                  Theme(
-                    data: Theme.of(context).copyWith(
-                      dividerColor: Colors.transparent,
-                    ),
-                    child: ExpansionTile(
-                      title: Text("Why can't I register with my mobile number?",
-                        style: AppTextStyles.kblack14700.copyWith(
-                            color: AppColors.kwhite
-                        ),
-                      ),
-                      iconColor: AppColors.kwhite,
-                      collapsedIconColor: AppColors.kwhite,
-                      showTrailingIcon: true,
-                      tilePadding: EdgeInsets.zero,
-                      textColor: AppColors.kwhite,
-                      expandedAlignment: Alignment.centerLeft,
-                      initiallyExpanded: true,
-                      children: [
-                        Text(
-                          "Your mobile number may already be linked to an existing Np account. Mobile numbers can only be registered in 1 (one) Shopline account (same for email addresses).",
-                          style: AppTextStyles.kblack14700.copyWith(
-                              color: AppColors.kwhite
+                          12.verticalSpace,
+                          Text(
+                            'ForcastIQ provides market forecasts for informational purposes only. This is NOT financial advice. All investments carry risk. Past performance does not guarantee future results. Always conduct your own research and consult with a licensed financial advisor before making investment decisions.',
+                            style: AppTextStyles.kblack14500.copyWith(
+                              color: AppColors.kwhite2,
+                              height: 1.5,
+                            ),
                           ),
-                        )
-                      ],
-                    ),
-                  ),
-                  24.verticalSpace,
-                  Theme(
-                    data: Theme.of(context).copyWith(
-                      dividerColor: Colors.transparent,
-                    ),
-                    child: ExpansionTile(
-                      title: Text("How do I make a credit card bill payment?",
-                        style: AppTextStyles.kblack14700.copyWith(
-                            color: AppColors.kwhite
-                        ),
+                        ],
                       ),
-                      iconColor: AppColors.kwhite,
-                      collapsedIconColor: AppColors.kwhite,
-                      showTrailingIcon: true,
-                      tilePadding: EdgeInsets.zero,
-                      textColor: AppColors.kwhite,
-                      expandedAlignment: Alignment.centerLeft,
-                      initiallyExpanded: true,
-                      children: [
-                        Text(
-                          "Quis placerat felis tincidunt dolor eget elemene euismod. ristique in cursus nisi est ut. At vel in pretium sed tincidunt integer. Vulputate vestibulum donec at nullam non. Mauris et morbi volutpat sed vestibulum, orci. Scelerisque arcu ipsum volutpat massa sagittis pharetra eget lacus. A velit fermentum mattis ac ultricies est, tellus turpis. Duis enim",
-                          style: AppTextStyles.kblack14700.copyWith(
-                              color: AppColors.kwhite
-                          ),
-                        )
-                      ],
                     ),
-                  )
+
+                    32.verticalSpace,
+
+                    // Contact Section
+                    // Text(
+                    //   'Contact & Support',
+                    //   style: AppTextStyles.kwhite16700.copyWith(
+                    //     color: AppColors.kwhite,
+                    //   ),
+                    // ),
+                    // 16.verticalSpace,
+
+                    // _buildContactButton(
+                    //   icon: Icons.email_outlined,
+                    //   label: 'Email Support',
+                    //   onTap: () {
+                    //     // Add email support functionality
+                    //   },
+                    // ),
+                    //
+                    // 12.verticalSpace,
+                    //
+                    // _buildContactButton(
+                    //   icon: Icons.help_outline,
+                    //   label: 'Help & FAQs',
+                    //   onTap: () {
+                    //     Navigator.pop(context);
+                    //   },
+                    // ),
 
 
-                  // Personal Information
-                ]
-            )
+
+                    16.verticalSpace,
+
+                    // Copyright
+                    Text(
+                      '© 2025 ForcastIQ. All rights reserved.',
+                      style: AppTextStyles.kblack12500.copyWith(
+                        color: AppColors.kwhite2,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+
+                    50.verticalSpace,
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
+  Widget _buildInfoCard({
+    required IconData icon,
+    required String title,
+    required String content,
+  }) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(16.w),
+      decoration: BoxDecoration(
+        color: AppColors.ksecondary,
+        borderRadius: BorderRadius.circular(12.r),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                icon,
+                color: AppColors.kprimary,
+                size: 20.r,
+              ),
+              8.horizontalSpace,
+              Text(
+                title,
+                style: AppTextStyles.kwhite16700.copyWith(
+                  color: AppColors.kwhite,
+                ),
+              ),
+            ],
+          ),
+          12.verticalSpace,
+          Text(
+            content,
+            style: AppTextStyles.kblack14500.copyWith(
+              color: AppColors.kwhite2,
+              height: 1.6,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContactButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+        decoration: BoxDecoration(
+          color: AppColors.ksecondary,
+          borderRadius: BorderRadius.circular(8.r),
+          border: Border.all(
+            color: AppColors.kwhite.withValues(alpha: 0.1),
+            width: 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              color: AppColors.kprimary,
+              size: 20.r,
+            ),
+            12.horizontalSpace,
+            Text(
+              label,
+              style: AppTextStyles.kblack14500.copyWith(
+                color: AppColors.kwhite,
+              ),
+            ),
+            const Spacer(),
+            Icon(
+              Icons.arrow_forward_ios,
+              color: AppColors.kwhite2,
+              size: 16.r,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
